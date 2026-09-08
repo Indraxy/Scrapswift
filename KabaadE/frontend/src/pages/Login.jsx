@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, Recycle, ShieldCheck, Truck, UserRound } from 'lucide-react'
 import { useI18n } from '../i18n'
-import { auth, catalog } from '../services/api'
+import { auth, catalog, supabaseAuth } from '../services/api'
 import { LanguageSwitcher } from '../components/Shell'
 
 const DEMO = [
@@ -44,19 +44,37 @@ export default function Login() {
     setBusy(true)
     setError('')
     try {
-      const result =
-        mode === 'login'
+      let result
+
+      if (supabaseAuth.enabled) {
+        // ── Supabase path (real users) ───────────────────────────────────────
+        result = mode === 'login'
+          ? await supabaseAuth.login(email, password)
+          : await supabaseAuth.register({
+              name, email, password, language: 'hi',
+              operating_location: area, role,
+            })
+
+        // Supabase signup may require email confirmation before a session exists.
+        if (!result.user) {
+          setError('Check your email and click the confirmation link, then sign in.')
+          return
+        }
+      } else {
+        // ── FastAPI / demo path (unchanged) ──────────────────────────────────
+        result = mode === 'login'
           ? await auth.login(email, password)
           : await auth.register({
               name, email, password, language: 'hi', operating_location: area,
             })
+      }
 
-      // The authenticated role is the backend's answer, never the email or the
-      // selected chip. If the two disagree, say so instead of silently
-      // dropping the user on the collector dashboard.
+      // The authenticated role is the answer from the auth provider, never
+      // the selected chip. If the two disagree, say so instead of silently
+      // dropping the user on the wrong dashboard.
       const actual = result.user.role
       if (actual !== role) {
-        auth.logout()
+        supabaseAuth.enabled ? await supabaseAuth.logout() : auth.logout()
         setError(t('roleMismatch').replace('{selected}', t(role)).replace('{actual}', t(actual)))
         return
       }

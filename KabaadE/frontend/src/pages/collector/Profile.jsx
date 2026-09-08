@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LogOut, Save } from 'lucide-react'
 import { LANGUAGES, useI18n } from '../../i18n'
-import { api, auth } from '../../services/api'
+import { api, auth, supabaseAuth } from '../../services/api'
 import { useCurrentUser } from '../../hooks/useCurrentUser'
 import { Notice } from '../../components/ui'
 
@@ -83,7 +83,14 @@ export default function Profile() {
 
       <button
         className="btn-ghost w-full justify-center"
-        onClick={() => { auth.logout(); navigate('/login') }}
+        onClick={async () => {
+          if (supabaseAuth.enabled) {
+            await supabaseAuth.logout()
+          } else {
+            auth.logout()
+          }
+          navigate('/login')
+        }}
       >
         <LogOut size={16} /> {t('signOut')}
       </button>

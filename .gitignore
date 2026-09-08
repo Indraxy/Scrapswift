@@ -1,0 +1,15 @@
+﻿# Environment files — never commit credentials
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-single/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
