@@ -5,7 +5,7 @@ import {
   ScanLine, ShieldCheck, Table2, Wallet,
 } from 'lucide-react'
 import { I18nProvider, useI18n } from './i18n'
-import { api, auth, setUnauthorizedHandler, startHealthWatch } from './services/api'
+import { api, auth, supabaseAuth, setUnauthorizedHandler, startHealthWatch } from './services/api'
 import { useCurrentUser } from './hooks/useCurrentUser'
 import { BottomNav, CollectorShell, DeskShell } from './components/Shell'
 import Login from './pages/Login'
@@ -39,7 +39,7 @@ function CollectorLayout({ children }) {
   const { t } = useI18n()
   const { pathname } = useLocation()
   const titles = {
-    '/app': 'KabaadE',
+    '/app': 'Scrapswift',
     '/app/new': t('newLot'),
     '/app/prices': t('todaysPrices'),
     '/app/recyclers': t('findRecycler'),
@@ -51,7 +51,7 @@ function CollectorLayout({ children }) {
   }
   return (
     <CollectorShell
-      title={titles[pathname] || 'KabaadE'}
+      title={titles[pathname] || 'Scrapswift'}
       nav={
         <BottomNav
           items={[
@@ -74,7 +74,7 @@ function RecyclerLayout({ children }) {
   const user = useCurrentUser()
   return (
     <DeskShell
-      title="KabaadE"
+      title="Scrapswift"
       subtitle={`${t('recycler')} · ${user?.name ?? ''}`}
       items={[
         { to: '/recycler', end: true, label: t('dashboard'), icon: <BarChart3 size={15} /> },
@@ -91,7 +91,7 @@ function AdminLayout({ children }) {
   const { t } = useI18n()
   return (
     <DeskShell
-      title="KabaadE"
+      title="Scrapswift"
       subtitle={`${t('admin')} · platform operations`}
       items={[
         { to: '/admin', end: true, label: t('dashboard'), icon: <BarChart3 size={15} /> },
@@ -116,8 +116,13 @@ export default function App() {
     })
     // Real health state, polled so the indicator recovers on its own.
     const stopWatch = startHealthWatch()
-    // Confirm the cached identity against the backend before first paint.
-    auth.restore().finally(() => setReady(true))
+    // Restore session: try Supabase first (if configured), then fall back to
+    // the cached FastAPI JWT. Both write to the same api.user store so the
+    // Guard component below doesn't need to know which path ran.
+    const restore = supabaseAuth.enabled
+      ? supabaseAuth.restore().catch(() => auth.restore())
+      : auth.restore()
+    restore.finally(() => setReady(true))
     return stopWatch
   }, [])
 

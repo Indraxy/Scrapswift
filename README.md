@@ -1,4 +1,4 @@
-# Kabadiwala Connect
+# Scrapswift
 
 **Fair prices. Authorised recyclers. Traceable handover.**
 
