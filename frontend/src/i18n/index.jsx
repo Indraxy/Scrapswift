@@ -1054,16 +1054,16 @@ export const STATUS_LABELS = {
   OFFER_ACCEPTED: { en: 'Offer accepted', hi: 'ऑफर स्वीकार हुआ', bn: 'ऑफर स्वीकारला' },
 }
 
-const DICTS = { en, hi, mr }
+const DICTS = { en, hi, bn }
 
 const I18nContext = createContext(null)
 
 export function I18nProvider({ children }) {
   const [lang, setLang] = useState(() => {
     try {
-      return window.__kcLang || 'hi'
+      return window.__kcLang || 'en'
     } catch {
-      return 'hi'
+      return 'en'
     }
   })
   const t = useCallback((key) => DICTS[lang]?.[key] ?? DICTS.en[key] ?? key, [lang])
