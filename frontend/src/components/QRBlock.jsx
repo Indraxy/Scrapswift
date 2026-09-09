@@ -14,7 +14,7 @@ export default function QRBlock({ lotId, size = 200 }) {
     <div className="plate-lg p-4 text-center">
       <div className="eyebrow">{t('showQr')}</div>
       <div className="mt-3 flex justify-center">
-        <div className="border-2 border-ink bg-white p-3">
+        <div id="qr-code-wrapper" className="border-2 border-ink bg-white p-3">
           <QRCode value={payload} size={size} fgColor="#12211C" bgColor="#FFFFFF" level="M" />
         </div>
       </div>

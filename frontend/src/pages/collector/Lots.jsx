@@ -236,7 +236,7 @@ function Row({ label, value }) {
 
 /** Rasterise the on-screen QR SVG to a PNG the collector can keep. */
 function downloadQr(lotId) {
-  const svg = document.querySelector('svg[height][width]')
+  const svg = document.querySelector('#qr-code-wrapper svg')
   if (!svg) return
   const xml = new XMLSerializer().serializeToString(svg)
   const img = new Image()
