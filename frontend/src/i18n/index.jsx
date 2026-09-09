@@ -9,7 +9,7 @@ export const LANGUAGES = [
 const en = {
   appName: 'Scrapswift',
   tagline: 'Fair rates. Authorised recyclers. Every lot traceable.',
-  welcomeHeadline1: 'Got e-waste?',
+  welcomeHeadline1: 'Got scrap?',
   welcomeHeadline2: 'Recycle it right.',
   welcomeSub: 'Know the fair rate before you sell. Reach authorised recyclers near you. Keep a record of every handover.',
   welcomePointPrice: "Today's real rates, spoken aloud in your language",
