@@ -1,8 +1,8 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+﻿import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 export const LANGUAGES = [
   { code: 'hi', label: 'हिंदी', speech: 'hi-IN' },
-  { code: 'mr', label: 'मराठी', speech: 'mr-IN' },
+  { code: 'bn', label: 'বাংলা', speech: 'bn-IN' },
   { code: 'en', label: 'English', speech: 'en-IN' },
 ]
 
@@ -686,7 +686,7 @@ const hi = {
   notFound: 'इस नंबर का कोई लॉट नहीं मिला।',
 }
 
-const mr = {
+const bn = {
   ...en,
   tagline: 'योग्य भाव. अधिकृत रिसायकलर. प्रत्येक लॉटची नोंद.',
   welcomeHeadline1: 'ई-कचरा आहे?',
@@ -1022,13 +1022,13 @@ const mr = {
 // Material names are shown to low-literacy users, so they are translated too.
 export const MATERIAL_NAMES = {
   // Keys are the canonical categories from data/seed/material_taxonomy.csv.
-  PCB: { en: 'PCB (circuit board)', hi: 'पीसीबी (सर्किट बोर्ड)', mr: 'पीसीबी (सर्किट बोर्ड)' },
-  Cable: { en: 'Cable / wire', hi: 'तार / केबल', mr: 'तार / केबल' },
-  Battery: { en: 'Battery', hi: 'बैटरी', mr: 'बॅटरी' },
-  'LCD/LED panel': { en: 'LCD / LED panel', hi: 'एलसीडी / एलईडी स्क्रीन', mr: 'एलसीडी / एलईडी स्क्रीन' },
-  CRT: { en: 'CRT tube', hi: 'सीआरटी ट्यूब', mr: 'सीआरटी ट्यूब' },
-  'Motor & magnet-bearing': { en: 'Motor / magnet part', hi: 'मोटर / मैगनेट वाला पुर्जा', mr: 'मोटर / मॅग्नेट भाग' },
-  'Mixed plastic': { en: 'Mixed plastic', hi: 'मिला-जुला प्लास्टिक', mr: 'मिश्र प्लास्टिक' },
+  PCB: { en: 'PCB (circuit board)', hi: 'पीसीबी (सर्किट बोर्ड)', bn: 'পিসিবি (সার্কিট বোর্ড)' },
+  Cable: { en: 'Cable / wire', hi: 'तार / केबल', bn: 'তার / কেবল' },
+  Battery: { en: 'Battery', hi: 'बैटरी', bn: 'ব্যাটারি' },
+  'LCD/LED panel': { en: 'LCD / LED panel', hi: 'एलसीडी / एलईडी स्क्रीन', bn: 'এলসিডি / এলఈডি স্ক্রিন' },
+  CRT: { en: 'CRT tube', hi: 'सीआरटी ट्यूब', bn: 'সিআরটি টিউব' },
+  'Motor & magnet-bearing': { en: 'Motor / magnet part', hi: 'मोटर / मैगनेट वाला पुर्जा', bn: 'মোটর / ম্যাগনেট অংশ' },
+  'Mixed plastic': { en: 'Mixed plastic', hi: 'मिला-जुला प्लास्टिक', bn: 'মিশ্র প্লাস্টিক' },
 }
 
 /** Legacy names still returned by older records, mapped to the canonical set. */
@@ -1040,21 +1040,21 @@ export const LEGACY_CATEGORY_ALIASES = {
 }
 
 export const STATUS_LABELS = {
-  LOT_CREATED: { en: 'Lot created', hi: 'लॉट बना', mr: 'लॉट तयार' },
-  PRICE_ESTIMATED: { en: 'Price estimated', hi: 'कीमत आँकी गई', mr: 'किंमत अंदाजित' },
-  RECYCLER_MATCHED: { en: 'Recycler matched', hi: 'रीसाइक्लर चुना', mr: 'रिसायकलर निवडला' },
-  HANDOVER_PENDING: { en: 'Handover pending', hi: 'हैंडओवर बाकी', mr: 'हँडओव्हर बाकी' },
-  RECYCLER_VERIFIED: { en: 'Recycler verified', hi: 'रीसाइक्लर ने जाँचा', mr: 'रिसायकलरने तपासले' },
-  HANDED_OVER: { en: 'Handed over', hi: 'सौंप दिया', mr: 'सुपूर्द केले' },
-  PAYMENT_PENDING: { en: 'Payment pending', hi: 'भुगतान बाकी', mr: 'पैसे बाकी' },
-  PAID: { en: 'Paid', hi: 'भुगतान हुआ', mr: 'पैसे मिळाले' },
-  COMPLETED: { en: 'Completed', hi: 'पूरा हुआ', mr: 'पूर्ण झाले' },
-  ANOMALY_FLAGGED: { en: 'Anomaly flagged', hi: 'गड़बड़ी दर्ज', mr: 'तफावत नोंदली' },
-  OFFER_RECEIVED: { en: 'Offer received', hi: 'ऑफर मिला', mr: 'ऑफर मिळाला' },
-  OFFER_ACCEPTED: { en: 'Offer accepted', hi: 'ऑफर स्वीकार हुआ', mr: 'ऑफर स्वीकारला' },
+  LOT_CREATED: { en: 'Lot created', hi: 'लॉट बना', bn: 'লট তৈরি' },
+  PRICE_ESTIMATED: { en: 'Price estimated', hi: 'कीमत आँकी गई', bn: 'আনুমানিক মূল্য' },
+  RECYCLER_MATCHED: { en: 'Recycler matched', hi: 'रीसाइक्लर चुना', bn: 'রিসাইক্লার নির্বাচন করা হয়েছে' },
+  HANDOVER_PENDING: { en: 'Handover pending', hi: 'हैंडओवर बाकी', bn: 'হস্তান্তর বাকি' },
+  RECYCLER_VERIFIED: { en: 'Recycler verified', hi: 'रीसाइक्लर ने जाँचा', bn: 'রিসাইক্লার যাচাই করেছে' },
+  HANDED_OVER: { en: 'Handed over', hi: 'सौंप दिया', bn: 'হস্তান্তর করা হয়েছে' },
+  PAYMENT_PENDING: { en: 'Payment pending', hi: 'भुगतान बाकी', bn: 'পেমেন্ট বাকি' },
+  PAID: { en: 'Paid', hi: 'भुगतान हुआ', bn: 'পেমেন্ট সম্পন্ন' },
+  COMPLETED: { en: 'Completed', hi: 'पूरा हुआ', bn: 'সম্পন্ন হয়েছে' },
+  ANOMALY_FLAGGED: { en: 'Anomaly flagged', hi: 'गड़बड़ी दर्ज', bn: 'অসঙ্গতি চিহ্নিত' },
+  OFFER_RECEIVED: { en: 'Offer received', hi: 'ऑफर मिला', bn: 'অফার পাওয়া গেছে' },
+  OFFER_ACCEPTED: { en: 'Offer accepted', hi: 'ऑफर स्वीकार हुआ', bn: 'অফার গৃহীত' },
 }
 
-const DICTS = { en, hi, mr }
+const DICTS = { en, hi, bn }
 
 const I18nContext = createContext(null)
 
@@ -1091,3 +1091,4 @@ export function useI18n() {
   if (!ctx) throw new Error('useI18n must be used inside I18nProvider')
   return ctx
 }
+

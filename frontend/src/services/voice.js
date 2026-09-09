@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Voice output.
  *
- * Two things broke Marathi before:
+ * Two things broke Bengali before:
  *
  *  1. `speechSynthesis.getVoices()` returns an EMPTY array on the first call
  *     in Chrome — the list arrives asynchronously and fires `voiceschanged`.
@@ -9,11 +9,11 @@
  *     pick its default voice (usually en-US), which reads Devanagari as
  *     gibberish or stays silent. We now wait for the list.
  *
- *  2. Very few systems ship an mr-IN voice at all. Matching failed, so it fell
- *     through to English. Marathi and Hindi share the Devanagari script and a
- *     hi-IN voice reads Marathi text intelligibly, so that is the fallback —
+ *  2. Very few systems ship an bn-IN voice at all. Matching failed, so it fell
+ *     through to English. Bengali and Hindi share the Devanagari script and a
+ *     hi-IN voice reads Bengali text intelligibly, so that is the fallback —
  *     and `lastVoiceNote()` reports when a substitute was used, rather than
- *     pretending it spoke Marathi.
+ *     pretending it spoke Bengali.
  */
 import { MATERIAL_NAMES } from '../i18n'
 
@@ -43,11 +43,11 @@ function loadVoices() {
   return voicesPromise
 }
 
-// Marathi -> Hindi is a genuine substitute (same script). Never fall back to
+// Bengali -> Hindi is a genuine substitute (same script). Never fall back to
 // an English voice for Devanagari text: it is worse than silence.
 const FALLBACK_LANGS = {
-  'mr-IN': ['mr-IN', 'mr', 'hi-IN', 'hi'],
-  'hi-IN': ['hi-IN', 'hi', 'mr-IN', 'mr'],
+  'bn-IN': ['bn-IN', 'bn', 'hi-IN', 'hi'],
+  'hi-IN': ['hi-IN', 'hi', 'bn-IN', 'bn'],
   'en-IN': ['en-IN', 'en-GB', 'en-US', 'en'],
 }
 
@@ -102,7 +102,7 @@ export function stopSpeaking() {
 
 const TREND_WORD = {
   hi: { rising: 'भाव बढ़ रहा है', falling: 'भाव गिर रहा है', stable: 'भाव स्थिर है' },
-  mr: { rising: 'भाव वाढत आहे', falling: 'भाव घटत आहे', stable: 'भाव स्थिर आहे' },
+  bn: { rising: 'দাম বাড়ছে', falling: 'দাম কমছে', stable: 'দাম স্থিতিশীল' },
   en: { rising: 'the rate is rising', falling: 'the rate is falling', stable: 'the rate is stable' },
 }
 
@@ -110,34 +110,35 @@ const TREND_WORD = {
 export function priceSentence({ category, min, max, trend }, lang = 'hi') {
   const name = MATERIAL_NAMES[category]?.[lang] ?? category
   const t = TREND_WORD[lang]?.[trend] ?? ''
-  if (lang === 'hi') return `${name} का आज का अनुमानित भाव ${min} से ${max} रुपये प्रति किलोग्राम है। ${t}।`
-  if (lang === 'mr') return `${name} चा आजचा अंदाजे भाव ${min} ते ${max} रुपये प्रति किलो आहे. ${t}.`
+  if (lang === 'hi') return `${name} का आज का अनुमानित भाव ${min} से ${max} रुपये प्रति কেজিग्राम है। ${t}।`
+  if (lang === 'bn') return `${name} এর আজকের আনুমানিক দাম ${min} থেকে ${max} টাকা প্রতি কেজি। ${t}.`
   return `Today's approximate rate for ${name} is ${min} to ${max} rupees per kilogram. ${t}.`
 }
 
 export function valueSentence({ category, weight, min, max }, lang = 'hi') {
   const name = MATERIAL_NAMES[category]?.[lang] ?? category
-  if (lang === 'hi') return `${weight} किलो ${name} की अनुमानित कीमत ${min} से ${max} रुपये है।`
-  if (lang === 'mr') return `${weight} किलो ${name} ची अंदाजे किंमत ${min} ते ${max} रुपये आहे.`
+  if (lang === 'hi') return `${weight} কেজি ${name} की अनुमानित कीमत ${min} से ${max} रुपये है।`
+  if (lang === 'bn') return `${weight} কেজি ${name} এর আনুমানিক দাম ${min} থেকে ${max} টাকা।`
   return `${weight} kilograms of ${name} is worth approximately ${min} to ${max} rupees.`
 }
 
 /** Spoken read-back of what the voice input understood, before committing. */
 export function confirmSentence({ category, weight, min, max }, lang = 'hi') {
   const name = MATERIAL_NAMES[category]?.[lang] ?? category
-  if (lang === 'hi') return `${weight} किलो ${name}। दाम लगभग ${min} से ${max} रुपये। सही है?`
-  if (lang === 'mr') return `${weight} किलो ${name}. किंमत अंदाजे ${min} ते ${max} रुपये. बरोबर आहे?`
+  if (lang === 'hi') return `${weight} কেজি ${name}। दाम लगभग ${min} से ${max} रुपये। सही है?`
+  if (lang === 'bn') return `${weight} কেজি ${name}। দাম আনুমানিক ${min} থেকে ${max} টাকা। ঠিক আছে?`
   return `${weight} kilograms of ${name}. Around ${min} to ${max} rupees. Is that correct?`
 }
 
 /** Spoken alarm when the recycler's figures do not match what was declared. */
 export function fairnessSentence({ declared, final, kind }, lang = 'hi') {
   if (kind === 'weight') {
-    if (lang === 'hi') return `ध्यान दीजिए। आपने ${declared} किलो दिया था, ${final} किलो लिखा जा रहा है। रुकिए और तौल दोबारा देखिए।`
-    if (lang === 'mr') return `लक्ष द्या. तुम्ही ${declared} किलो दिले होते, ${final} किलो लिहिले जात आहे. थांबा आणि वजन पुन्हा तपासा.`
+    if (lang === 'hi') return `ध्यान दीजिए। आपने ${declared} কেজি दिया था, ${final} কেজি लिखा जा रहा है। रुकिए और तौल दोबारा देखिए।`
+    if (lang === 'bn') return `লক্ষ্য করুন। আপনি ${declared} কেজি दिले होথেকে, ${final} কেজি লেখা হচ্ছে। থামুন এবং ওজন আবার চেক করুন।`
     return `Careful. You declared ${declared} kilograms but ${final} is being recorded. Check the scale.`
   }
   if (lang === 'hi') return `ध्यान दीजिए। जो दाम लिखा जा रहा है वह बाज़ार भाव से काफी कम है।`
-  if (lang === 'mr') return `लक्ष द्या. लिहिली जाणारी किंमत बाजारभावापेक्षा खूप कमी आहे.`
+  if (lang === 'bn') return `লক্ষ্য করুন। লেখা দাম বাজার দরের চেয়ে অনেক কম।`
   return `Careful. The price being recorded is well below the market rate.`
 }
+

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * In-browser demo engine.
  *
  * Mirrors the FastAPI backend (same seed shape, same price engine, same
@@ -30,13 +30,13 @@ export const MATERIALS = [
 const COLLECTORS = [
   ['Ramesh Kumar', 'collector@demo.com', 'hi', 'Malviya Nagar, Jaipur', 26.8535, 75.8135],
   ['Sunita Devi', 'sunita@demo.com', 'hi', 'Sanganer, Jaipur', 26.818, 75.79],
-  ['Imran Shaikh', 'imran@demo.com', 'mr', 'Jhotwara, Jaipur', 26.944, 75.748],
+  ['Imran Shaikh', 'imran@demo.com', 'bn', 'Jhotwara, Jaipur', 26.944, 75.748],
   ['Lakshmi Bai', 'lakshmi@demo.com', 'hi', 'Vaishali Nagar, Jaipur', 26.912, 75.737],
   ['Govind Meena', 'govind@demo.com', 'hi', 'Amer Road, Jaipur', 26.98, 75.85],
-  ['Prakash Jadhav', 'prakash@demo.com', 'mr', 'Mansarovar, Jaipur', 26.85, 75.762],
+  ['Prakash Jadhav', 'prakash@demo.com', 'bn', 'Mansarovar, Jaipur', 26.85, 75.762],
   ['Fatima Bano', 'fatima@demo.com', 'hi', 'Ramganj, Jaipur', 26.922, 75.83],
   ['Deepak Yadav', 'deepak@demo.com', 'hi', 'Jagatpura, Jaipur', 26.818, 75.862],
-  ['Sanjay More', 'sanjay@demo.com', 'mr', 'Bais Godam, Jaipur', 26.901, 75.783],
+  ['Sanjay More', 'sanjay@demo.com', 'bn', 'Bais Godam, Jaipur', 26.901, 75.783],
   ['Kavita Sharma', 'kavita@demo.com', 'en', 'C-Scheme, Jaipur', 26.907, 75.793],
 ]
 
@@ -1123,3 +1123,4 @@ export function acceptOffer(offerId) {
 
 export function ensureSeeded() { seed() }
 export function setSession(user) { db.session = user }
+

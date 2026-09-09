@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { AlertTriangle, Calculator, Coins, Download, Package, Receipt, Recycle, Wallet } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { AlertTriangle, Calculator, Coins, Download, Package, Receipt, Recycle, Wallet, LogOut } from 'lucide-react'
 import { useI18n } from '../../i18n'
-import { catalog } from '../../services/api'
+import { catalog, auth } from '../../services/api'
 import { useCurrentUser } from '../../hooks/useCurrentUser'
 import { getCache, putCache } from '../../offline/db'
 import { RateBoard, SpeakButton } from '../../components/ui'
@@ -21,6 +21,7 @@ const TILES = [
 export default function Home() {
   const { t, lang } = useI18n()
   const user = useCurrentUser()
+  const navigate = useNavigate()
   const [board, setBoard] = useState([])
   const [installer, setInstaller] = useState(null)
 
@@ -40,6 +41,11 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const handleLogout = () => {
+    auth.logout()
+    navigate('/')
+  }
+
   const top = board.slice(0, 4)
   const spoken = top
     .map((r) => priceSentence({ category: r.category, min: r.min_price, max: r.max_price, trend: r.trend }, lang))
@@ -52,9 +58,19 @@ export default function Home() {
           <div className="font-display text-3xl leading-none">
             {t('greeting')}{user?.name ? `, ${user.name}` : ''} 👋
           </div>
-          <div className="mt-1 text-sm text-slate2">
-            <Link to="/app/profile" className="underline">{user?.name ?? '—'}</Link>
-            {user?.location ? ` · ${user.location}` : ''}
+          <div className="mt-1 flex items-center gap-3 text-sm text-slate2">
+            <div>
+              <Link to="/app/profile" className="underline">{user?.name ?? '—'}</Link>
+              {user?.location ? ` · ${user.location}` : ''}
+            </div>
+            <button 
+              onClick={handleLogout} 
+              className="flex items-center gap-1 text-red-600 hover:text-red-700 transition-colors"
+              title="Sign Out"
+            >
+              <LogOut size={14} />
+              <span className="text-xs font-medium">Sign out</span>
+            </button>
           </div>
         </div>
         {top.length > 0 && <SpeakButton text={spoken} />}

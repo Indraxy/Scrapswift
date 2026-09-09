@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
 import { Check, Mic, Square, X } from 'lucide-react'
 import { MATERIAL_NAMES, useI18n } from '../i18n'
 import { catalog } from '../services/api'
@@ -66,7 +66,7 @@ export default function VoiceLot({ onConfirm, onClose }) {
       onError: (kind) => {
         setState('error')
         if (kind === 'language') {
-          // Marathi in particular is missing on many devices. Say so, and let
+          // Bengali in particular is missing on many devices. Say so, and let
           // the collector choose — never switch language behind their back.
           setLangUnsupported(overrideLocale || speech)
           setError(t('micLangUnsupported').replace('{lang}', overrideLocale || speech))
@@ -219,3 +219,4 @@ export default function VoiceLot({ onConfirm, onClose }) {
 function materialLabel(category, lang) {
   return MATERIAL_NAMES[category]?.[lang] ?? category
 }
+
