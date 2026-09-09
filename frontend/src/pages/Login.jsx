@@ -65,7 +65,7 @@ export default function Login() {
         result = mode === 'login'
           ? await auth.login(email, password)
           : await auth.register({
-              name, email, password, language: 'hi', operating_location: area,
+              name, email, password, language: 'hi', operating_location: area, role,
             })
       }
 

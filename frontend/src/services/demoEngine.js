@@ -598,16 +598,30 @@ export function login(email, password) {
   return { token: `demo.${user.id}`, user: db.session }
 }
 
-export function registerCollector({ name, email, language, operating_location, latitude, longitude }) {
+export function registerCollector({ name, email, language, operating_location, latitude, longitude, role = 'collector' }) {
   seed()
   const id = Math.max(...db.users.map((u) => u.id)) + 1
-  db.users.push({ id, email: email.toLowerCase(), role: 'collector', name, language })
-  const collector = {
-    collector_id: db.collectors.length + 1, user_id: id, display_name: name, language,
-    operating_location, latitude: latitude || 22.5726, longitude: longitude || 88.3639,
-    created_at: now(),
+  db.users.push({ id, email: email.toLowerCase(), role, name, language })
+  
+  if (role === 'recycler') {
+    const recycler = {
+      recycler_id: db.recyclers.length + 1, user_id: id, name,
+      location: operating_location, latitude: latitude || 22.5726, longitude: longitude || 88.3639,
+      accepted_materials: ['PCB', 'Cable', 'Battery'], authorization_number: 'PENDING',
+      verification_status: 'pending', contact_phone: '+91 00000 00000', price_multiplier: 1.0,
+      upi_verified: false, current_capacity_kg: 50,
+      created_at: now(),
+    }
+    db.recyclers.push(recycler)
+  } else {
+    const collector = {
+      collector_id: db.collectors.length + 1, user_id: id, display_name: name, language,
+      operating_location, latitude: latitude || 22.5726, longitude: longitude || 88.3639,
+      created_at: now(),
+    }
+    db.collectors.push(collector)
   }
-  db.collectors.push(collector)
+  
   return login(email, 'password123')
 }
 
