@@ -1,4 +1,4 @@
-﻿# Kabadiwala Connect
+# Kabadiwala Connect
 
 **Fair prices. Authorised recyclers. Traceable handover.**
 
@@ -43,7 +43,7 @@ collector login → photo → AI material suggestion → confirm/correct → wei
 | Payment (cash / UPI mode) + earnings ledger | working |
 | 9-state traceability timeline | working |
 | Admin dashboard, recycler verification, anomaly alerts, traceability search | working |
-| Hindi / Bengali / English UI + speech synthesis | working |
+| Hindi / Marathi / English UI + speech synthesis | working |
 | PWA install, service worker, IndexedDB offline drafts + sync | working (basic) |
 | Leaflet + OpenStreetMap maps | working |
 | Browser Geolocation stamped onto lots | working (falls back to registered area) |
@@ -75,7 +75,7 @@ kabadiwala-connect/
     ├── public/     manifest.webmanifest, sw.js, icons
     └── src/
         ├── App.jsx  main.jsx  index.css
-        ├── i18n/                   en / hi / bn dictionaries
+        ├── i18n/                   en / hi / mr dictionaries
         ├── services/               api.js, demoEngine.js, voice.js
         ├── offline/                db.js (Dexie), sync.js
         ├── components/             ui, Shell, QRBlock, Scanner, MapView, Charts
@@ -416,7 +416,7 @@ shape works: `POST /auth/login`, `GET /materials`, `POST /lots/{lot_id}/price-es
    camera is available the gallery option always remains.
 8. **Map tiles need internet.** Markers still render without tiles, but the basemap will be blank
    on an offline machine.
-9. **Speech synthesis quality varies by device.** Hindi and Bengali voices exist on most Android
+9. **Speech synthesis quality varies by device.** Hindi and Marathi voices exist on most Android
    and recent desktop browsers; where a voice is missing the browser falls back or stays silent —
    the text is always on screen.
 10. **GPS is optional.** The lot screen asks for browser geolocation and stamps the coordinates on
@@ -430,5 +430,3 @@ shape works: `POST /auth/login`, `GET /materials`, `POST /lots/{lot_id}/price-es
 ## 9. Licence and attribution
 
 Prototype built for SIH PS 26229. Maps © OpenStreetMap contributors. Icons by Lucide.
-
-

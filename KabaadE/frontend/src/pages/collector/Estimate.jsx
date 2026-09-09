@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Calculator, Info, TrendingUp } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import { scrap } from '../../services/api'
@@ -62,8 +62,8 @@ export default function Estimate() {
 
   const spoken = result && (lang === 'hi'
     ? `${result.quantity} ${result.unit} ${result.material} की अनुमानित कीमत ${result.estimated_value} रुपये है।`
-    : lang === 'bn'
-      ? `${result.quantity} ${result.unit} ${result.material} এর আনুমানিক মূল্য ${result.estimated_value} টাকা।`
+    : lang === 'mr'
+      ? `${result.quantity} ${result.unit} ${result.material} ची अंदाजे किंमत ${result.estimated_value} रुपये आहे.`
       : `${result.quantity} ${result.unit} of ${result.material} is worth about ${result.estimated_value} rupees.`)
 
   return (
@@ -193,4 +193,3 @@ function Row({ label, value }) {
     </div>
   )
 }
-

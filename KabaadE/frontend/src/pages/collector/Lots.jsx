@@ -253,7 +253,7 @@ function downloadQr(lotId) {
     ctx.textAlign = 'center'
     ctx.fillText(lotId, 260, 500)
     ctx.font = '20px sans-serif'
-    ctx.fillText('Scrapswift', 260, 540)
+    ctx.fillText('KabaadE', 260, 540)
     const link = document.createElement('a')
     link.download = `${lotId}.png`
     link.href = canvas.toDataURL('image/png')

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Turn one spoken sentence into { material, weight }.
  *
  * "साढ़े आठ किलो तार"      -> { material: 'Cable',  weight: 8.5 }
@@ -12,7 +12,7 @@
  */
 
 const UNITS = {
-  // Hindi / Bengali
+  // Hindi / Marathi
   'शून्य': 0, 'एक': 1, 'दो': 2, 'दोन': 2, 'तीन': 3, 'चार': 4, 'पांच': 5, 'पाँच': 5,
   'पाच': 5, 'छह': 6, 'छः': 6, 'सहा': 6, 'सात': 7, 'आठ': 8, 'नौ': 9, 'नऊ': 9,
   'दस': 10, 'दहा': 10, 'ग्यारह': 11, 'अकरा': 11, 'बारह': 12, 'बारा': 12,
@@ -124,4 +124,3 @@ export function parseLotSpeech(transcript) {
     complete: Boolean(material && weight),
   }
 }
-
