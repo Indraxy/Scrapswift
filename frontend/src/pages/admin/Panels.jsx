@@ -208,7 +208,7 @@ export function MapPage() {
       </div>
       <MapView points={points} height={520} zoom={10} />
       <p className="text-[11px] text-slate2">
-        Leaflet with OpenStreetMap tiles. Locations are fictional demo coordinates around Jaipur.
+        Leaflet with OpenStreetMap tiles. Locations are fictional demo coordinates around Kolkata.
       </p>
     </div>
   )

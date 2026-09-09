@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css'
  * Leaflet + OpenStreetMap. Circle markers instead of image pins so the map
  * needs no bundled assets and still renders if tiles are blocked.
  */
-export default function MapView({ points = [], center = [26.9124, 75.7873], zoom = 11, height = 340 }) {
+export default function MapView({ points = [], center = [22.5726, 88.3639], zoom = 11, height = 340 }) {
   return (
     <div className="border-2 border-ink" style={{ height }}>
       <MapContainer center={center} zoom={zoom} style={{ height: '100%', width: '100%' }} scrollWheelZoom={false}>
