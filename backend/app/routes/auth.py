@@ -76,19 +76,34 @@ def register(payload: RegisterIn, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == email).first():
         raise HTTPException(status.HTTP_409_CONFLICT, "That email is already registered")
     user = User(
-        email=email, password_hash=hash_password(payload.password), role="collector",
+        email=email, password_hash=hash_password(payload.password), role=payload.role,
         name=payload.name, language=payload.language,
     )
     db.add(user)
     db.flush()
     city, lat, lng = _resolve_city(db, payload.operating_location)
-    db.add(Collector(
-        user_id=user.id, display_name=payload.name, language=payload.language,
-        operating_location=payload.operating_location or city,
-        # A device-supplied fix always wins over the city centroid.
-        latitude=payload.latitude if payload.latitude else lat,
-        longitude=payload.longitude if payload.longitude else lng,
-    ))
+    
+    if payload.role == "recycler":
+        db.add(Recycler(
+            user_id=user.id, name=payload.name,
+            location=payload.operating_location or city,
+            latitude=payload.latitude if payload.latitude else lat,
+            longitude=payload.longitude if payload.longitude else lng,
+            accepted_materials=["PCB", "Cable", "Battery"],
+            authorization_id="PENDING",
+            authorization_status="pending",
+            contact="+91 00000 00000",
+            pickup_available=False,
+            service_area_km=25.0
+        ))
+    else:
+        db.add(Collector(
+            user_id=user.id, display_name=payload.name, language=payload.language,
+            operating_location=payload.operating_location or city,
+            latitude=payload.latitude if payload.latitude else lat,
+            longitude=payload.longitude if payload.longitude else lng,
+        ))
+    
     db.commit()
     db.refresh(user)
     return TokenOut(token=create_token(user.id, user.role), user=_user_out(db, user))

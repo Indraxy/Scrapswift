@@ -548,9 +548,10 @@ function VerdictBadge({ prediction }) {
     NOT_E_WASTE: t('verdictNot'),
     UNCERTAIN: t('verdictUncertain'),
   }[verdict]
+  const displayVerdict = verdict === 'E_WASTE' ? 'SCRAP' : verdict === 'NOT_E_WASTE' ? 'NOT_SCRAP' : verdict
   return (
     <span className={`chip ${style}`}>
-      <span className="num">{verdict}</span> · {label}
+      <span className="num">{displayVerdict}</span> · {label}
     </span>
   )
 }

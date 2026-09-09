@@ -47,6 +47,8 @@ class RegisterIn(BaseModel):
     operating_location: str = "Pune"
     latitude: float | None = None
     longitude: float | None = None
+    role: str = 'collector'
+    role: str = "collector"
 
 
 class UpdateMeIn(BaseModel):
@@ -72,6 +74,7 @@ class UserOut(BaseModel):
     location: str | None = None
     latitude: float | None = None
     longitude: float | None = None
+    role: str = 'collector'
 
 
 class TokenOut(BaseModel):
