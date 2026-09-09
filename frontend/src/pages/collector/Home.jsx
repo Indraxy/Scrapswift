@@ -87,15 +87,20 @@ export default function Home() {
 
       {top.length > 0 && <RateBoard rows={top} />}
 
-      {installer && (
-        <button
-          type="button"
-          className="btn-ghost w-full"
-          onClick={() => { installer.prompt(); setInstaller(null) }}
-        >
-          <Download size={18} /> {t('installApp')}
-        </button>
-      )}
+      <button
+        type="button"
+        className="btn-ghost w-full"
+        onClick={() => {
+          if (installer) {
+            installer.prompt()
+            setInstaller(null)
+          } else {
+            alert('App installation is either not supported by this browser, or it is already installed!')
+          }
+        }}
+      >
+        <Download size={18} /> {t('installApp')}
+      </button>
 
       <p className="pb-2 text-center text-[11px] text-slate2">
         {t('demoDataNote')}
