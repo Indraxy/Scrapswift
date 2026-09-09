@@ -39,7 +39,7 @@ function CollectorLayout({ children }) {
   const { t } = useI18n()
   const { pathname } = useLocation()
   const titles = {
-    '/app': 'KabaadE',
+    '/app': 'Scrapswift',
     '/app/new': t('newLot'),
     '/app/prices': t('todaysPrices'),
     '/app/recyclers': t('findRecycler'),
@@ -51,7 +51,7 @@ function CollectorLayout({ children }) {
   }
   return (
     <CollectorShell
-      title={titles[pathname] || 'KabaadE'}
+      title={titles[pathname] || 'Scrapswift'}
       nav={
         <BottomNav
           items={[
@@ -74,7 +74,7 @@ function RecyclerLayout({ children }) {
   const user = useCurrentUser()
   return (
     <DeskShell
-      title="KabaadE"
+      title="Scrapswift"
       subtitle={`${t('recycler')} · ${user?.name ?? ''}`}
       items={[
         { to: '/recycler', end: true, label: t('dashboard'), icon: <BarChart3 size={15} /> },
@@ -91,7 +91,7 @@ function AdminLayout({ children }) {
   const { t } = useI18n()
   return (
     <DeskShell
-      title="KabaadE"
+      title="Scrapswift"
       subtitle={`${t('admin')} · platform operations`}
       items={[
         { to: '/admin', end: true, label: t('dashboard'), icon: <BarChart3 size={15} /> },

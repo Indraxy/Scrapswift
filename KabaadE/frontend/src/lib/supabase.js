@@ -1,5 +1,5 @@
 /**
- * supabase.js — Singleton Supabase client for KabaadE.
+ * supabase.js — Singleton Supabase client for Scrapswift.
  *
  * Usage:
  *   import { supabase, isSupabaseConfigured } from '../lib/supabase'

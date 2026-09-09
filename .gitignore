@@ -13,3 +13,14 @@ dist-single/
 # Editor / OS
 .DS_Store
 Thumbs.db
+
+# Python / Backend
+__pycache__/
+*.py[cod]
+*.class
+.venv/
+
+# Databases
+*.db
+*.db-journal
+*.sqlite3

@@ -1,5 +1,5 @@
 /**
- * supabaseDb.js — Real Supabase data layer for KabaadE.
+ * supabaseDb.js — Real Supabase data layer for Scrapswift.
  *
  * Mirrors the demo engine's function signatures exactly so api.js can route
  * to this as a drop-in third path:
