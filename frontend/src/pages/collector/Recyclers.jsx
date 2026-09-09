@@ -23,8 +23,8 @@ export default function Recyclers() {
   const [rows, setRows] = useState(null)
   const [cached, setCached] = useState(false)
 
-  const lat = coords?.latitude ?? user?.latitude ?? 26.9124
-  const lng = coords?.longitude ?? user?.longitude ?? 75.7873
+  const lat = coords?.latitude ?? user?.latitude ?? 22.5726
+  const lng = coords?.longitude ?? user?.longitude ?? 88.3639
 
   useEffect(() => {
     let alive = true

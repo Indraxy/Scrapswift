@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Calculator, Info, TrendingUp } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import { scrap } from '../../services/api'
@@ -6,14 +6,14 @@ import { Loading, Notice, SpeakButton, rupee } from '../../components/ui'
 
 const QUALITY = ['clean', 'mixed', 'dirty', 'damaged']
 const LOCALITIES = [
-  'Jaipur', 'Malviya Nagar', 'Vaishali Nagar', 'Mansarovar', 'C-Scheme',
-  'Raja Park', 'Tonk Road', 'Sodala', 'Gopalpura', 'Durgapura', 'MI Road',
+  'Kolkata', 'Anandapur', 'Salt Lake', 'New Town', 'Park Street',
+  'Jadavpur', 'Dum Dum', 'Behala', 'Howrah', 'Garia',
 ]
 
 /**
  * Smart Scrap Value Estimator.
  *
- * Anchored on the published Jaipur reference rates; the ML layer only adjusts
+ * Anchored on the published Kolkata reference rates; the ML layer only adjusts
  * for locality, quality and quantity. The screen always shows BOTH the
  * published rate and the estimate, so the collector can see what moved and by
  * how much rather than being handed an unexplained number.
@@ -25,7 +25,7 @@ export default function Estimate() {
   const [category, setCategory] = useState('Plastic')
   const [material, setMaterial] = useState('')
   const [quantity, setQuantity] = useState('')
-  const [locality, setLocality] = useState('Jaipur')
+  const [locality, setLocality] = useState('Kolkata')
   const [quality, setQuality] = useState('mixed')
   const [result, setResult] = useState(null)
   const [busy, setBusy] = useState(false)

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * In-browser demo engine.
  *
  * Mirrors the FastAPI backend (same seed shape, same price engine, same
@@ -28,35 +28,35 @@ export const MATERIALS = [
 ]
 
 const COLLECTORS = [
-  ['Ramesh Kumar', 'collector@demo.com', 'hi', 'Malviya Nagar, Jaipur', 26.8535, 75.8135],
-  ['Sunita Devi', 'sunita@demo.com', 'hi', 'Sanganer, Jaipur', 26.818, 75.79],
-  ['Imran Shaikh', 'imran@demo.com', 'bn', 'Jhotwara, Jaipur', 26.944, 75.748],
-  ['Lakshmi Bai', 'lakshmi@demo.com', 'hi', 'Vaishali Nagar, Jaipur', 26.912, 75.737],
-  ['Govind Meena', 'govind@demo.com', 'hi', 'Amer Road, Jaipur', 26.98, 75.85],
-  ['Prakash Jadhav', 'prakash@demo.com', 'bn', 'Mansarovar, Jaipur', 26.85, 75.762],
-  ['Fatima Bano', 'fatima@demo.com', 'hi', 'Ramganj, Jaipur', 26.922, 75.83],
-  ['Deepak Yadav', 'deepak@demo.com', 'hi', 'Jagatpura, Jaipur', 26.818, 75.862],
-  ['Sanjay More', 'sanjay@demo.com', 'bn', 'Bais Godam, Jaipur', 26.901, 75.783],
-  ['Kavita Sharma', 'kavita@demo.com', 'en', 'C-Scheme, Jaipur', 26.907, 75.793],
+  ['Ramesh Kumar', 'collector@demo.com', 'hi', 'Anandapur, Kolkata', 22.5135, 88.3935],
+  ['Sunita Devi', 'sunita@demo.com', 'hi', 'Jadavpur, Kolkata', 22.4980, 88.3700],
+  ['Imran Shaikh', 'imran@demo.com', 'bn', 'Dum Dum, Kolkata', 22.6240, 88.4280],
+  ['Lakshmi Bai', 'lakshmi@demo.com', 'hi', 'Salt Lake, Kolkata', 22.5720, 88.4170],
+  ['Govind Meena', 'govind@demo.com', 'hi', 'Baranagar, Kolkata', 22.6400, 88.3700],
+  ['Prakash Jadhav', 'prakash@demo.com', 'bn', 'Behala, Kolkata', 22.5100, 88.3420],
+  ['Fatima Bano', 'fatima@demo.com', 'hi', 'Park Street, Kolkata', 22.5520, 88.3600],
+  ['Deepak Yadav', 'deepak@demo.com', 'hi', 'Garia, Kolkata', 22.4680, 88.3820],
+  ['Sanjay More', 'sanjay@demo.com', 'bn', 'Howrah, Kolkata', 22.5610, 88.3230],
+  ['Kavita Sharma', 'kavita@demo.com', 'en', 'New Town, Kolkata', 22.5870, 88.4630],
 ]
 
 const RECYCLERS = [
-  ['Green Recyclers', 'recycler@demo.com', 'Ajmer Road Industrial Belt, Jaipur', 26.913, 75.783, ['PCB', 'Cable', 'Battery', 'Motor & magnet-bearing', 'LCD/LED panel'], 'AUTH-12345', 'approved', '+91 98290 10001', 1.03, true, 25],
-  ['Aravalli E-Waste Pvt Ltd', 'aravalli@demo.com', 'Sitapura Industrial Area, Jaipur', 26.786, 75.848, ['PCB', 'LCD/LED panel', 'CRT', 'Mixed plastic', 'Cable'], 'AUTH-20871', 'approved', '+91 98290 10002', 0.98, true, 30],
-  ['Pink City Metals', null, 'Bais Godam, Jaipur', 26.889, 75.772, ['Cable', 'Motor & magnet-bearing'], 'AUTH-30442', 'approved', '+91 98290 10003', 1.01, false, 15],
-  ['Jaipur Circular Systems', null, 'Jhotwara Industrial Area, Jaipur', 26.949, 75.735, ['PCB', 'Battery', 'Mixed plastic'], 'AUTH-40113', 'approved', '+91 98290 10004', 0.96, true, 20],
-  ['Marudhara Recycling', null, 'Bagru, Jaipur', 26.813, 75.546, ['CRT', 'LCD/LED panel', 'Mixed plastic', 'Motor & magnet-bearing'], 'AUTH-50219', 'approved', '+91 98290 10005', 0.94, false, 35],
-  ['Chambal Green Loop', null, 'Kota Road, Jaipur', 26.76, 75.81, ['Battery', 'PCB', 'Cable'], 'AUTH-60777', 'approved', '+91 98290 10006', 1.0, true, 28],
-  ['Suraj Metal Recovery', null, 'Sanganer, Jaipur', 26.821, 75.788, ['Cable', 'Motor & magnet-bearing', 'Mixed plastic'], 'AUTH-70884', 'approved', '+91 98290 10007', 0.97, true, 18],
-  ['Nirmal Urban Mining', null, 'Kukas, Jaipur', 27.048, 75.912, ['PCB', 'Motor & magnet-bearing', 'LCD/LED panel', 'Battery'], 'AUTH-80990', 'approved', '+91 98290 10008', 1.02, true, 32],
-  ['Shakti Waste Solutions', null, 'Chomu, Jaipur', 27.167, 75.722, ['Cable', 'Battery', 'CRT'], 'AUTH-90551', 'pending', '+91 98290 10009', 0.99, true, 25],
-  ['Vasundhara Recyclers', null, 'Tonk Road, Jaipur', 26.802, 75.806, ['PCB', 'LCD/LED panel', 'Mixed plastic'], 'AUTH-91662', 'pending', '+91 98290 10010', 1.0, false, 20],
+  ['Green Recyclers', 'recycler@demo.com', 'Tangra Industrial Belt, Kolkata', 22.5530, 88.3830, ['PCB', 'Cable', 'Battery', 'Motor & magnet-bearing', 'LCD/LED panel'], 'AUTH-12345', 'approved', '+91 98290 10001', 1.03, true, 25],
+  ['Bengal E-Waste Pvt Ltd', 'aravalli@demo.com', 'Kasba Industrial Area, Kolkata', 22.5160, 88.3880, ['PCB', 'LCD/LED panel', 'CRT', 'Mixed plastic', 'Cable'], 'AUTH-20871', 'approved', '+91 98290 10002', 0.98, true, 30],
+  ['Hooghly Metals', null, 'Howrah, Kolkata', 22.5490, 88.3120, ['Cable', 'Motor & magnet-bearing'], 'AUTH-30442', 'approved', '+91 98290 10003', 1.01, false, 15],
+  ['Kolkata Circular Systems', null, 'Dum Dum Industrial Area, Kolkata', 22.6290, 88.4350, ['PCB', 'Battery', 'Mixed plastic'], 'AUTH-40113', 'approved', '+91 98290 10004', 0.96, true, 20],
+  ['Sundarbans Recycling', null, 'Baruipur, Kolkata', 22.3530, 88.4360, ['CRT', 'LCD/LED panel', 'Mixed plastic', 'Motor & magnet-bearing'], 'AUTH-50219', 'approved', '+91 98290 10005', 0.94, false, 35],
+  ['Ganga Green Loop', null, 'Barrackpore, Kolkata', 22.7600, 88.3700, ['Battery', 'PCB', 'Cable'], 'AUTH-60777', 'approved', '+91 98290 10006', 1.0, true, 28],
+  ['Sealdah Metal Recovery', null, 'Sealdah, Kolkata', 22.5710, 88.3680, ['Cable', 'Motor & magnet-bearing', 'Mixed plastic'], 'AUTH-70884', 'approved', '+91 98290 10007', 0.97, true, 18],
+  ['Rajarhat Urban Mining', null, 'Rajarhat, Kolkata', 22.6080, 88.4920, ['PCB', 'Motor & magnet-bearing', 'LCD/LED panel', 'Battery'], 'AUTH-80990', 'approved', '+91 98290 10008', 1.02, true, 32],
+  ['Shakti Waste Solutions', null, 'Baranagar, Kolkata', 22.6370, 88.3720, ['Cable', 'Battery', 'CRT'], 'AUTH-90551', 'pending', '+91 98290 10009', 0.99, true, 25],
+  ['Kalighat Recyclers', null, 'Tollygunge, Kolkata', 22.5020, 88.3460, ['PCB', 'LCD/LED panel', 'Mixed plastic'], 'AUTH-91662', 'pending', '+91 98290 10010', 1.0, false, 20],
 ]
 
 const DEMO_PCB = {
   'Green Recyclers': 195,
   'Aravalli E-Waste Pvt Ltd': 186,
-  'Jaipur Circular Systems': 178,
+  'Kolkata Circular Systems': 178,
   'Chambal Green Loop': 189,
   'Nirmal Urban Mining': 188,
   'Vasundhara Recyclers': 184,
@@ -133,7 +133,7 @@ function seed() {
     })
   })
 
-  const locations = ['Malviya Nagar, Jaipur', 'Sanganer, Jaipur', 'Ajmer Road Industrial Belt, Jaipur']
+  const locations = ['Anandapur, Kolkata', 'Jadavpur, Kolkata', 'Tangra Industrial Belt, Kolkata']
   MATERIALS.forEach((m) => {
     for (let day = 90; day >= 0; day -= 1) {
       const date = t0 - day * DAY
@@ -592,8 +592,8 @@ export function login(email, password) {
   db.session = {
     id: user.id, name: user.name, email: user.email, role: user.role, language: user.language,
     profile_id: profile?.collector_id ?? profile?.recycler_id ?? null,
-    location: profile?.operating_location ?? profile?.location ?? 'Jaipur',
-    latitude: profile?.latitude ?? 26.9124, longitude: profile?.longitude ?? 75.7873,
+    location: profile?.operating_location ?? profile?.location ?? 'Kolkata',
+    latitude: profile?.latitude ?? 22.5726, longitude: profile?.longitude ?? 88.3639,
   }
   return { token: `demo.${user.id}`, user: db.session }
 }
@@ -604,7 +604,7 @@ export function registerCollector({ name, email, language, operating_location, l
   db.users.push({ id, email: email.toLowerCase(), role: 'collector', name, language })
   const collector = {
     collector_id: db.collectors.length + 1, user_id: id, display_name: name, language,
-    operating_location, latitude: latitude || 26.9124, longitude: longitude || 75.7873,
+    operating_location, latitude: latitude || 22.5726, longitude: longitude || 88.3639,
     created_at: now(),
   }
   db.collectors.push(collector)

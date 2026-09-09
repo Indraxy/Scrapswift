@@ -393,8 +393,8 @@ export const catalog = {
           const { supabase: sb } = await import('../lib/supabase')
           const { data: recs } = await sb.from('recyclers').select('city').not('city', 'is', null)
           const cities = [...new Set((recs ?? []).map(r => r.city).filter(Boolean))]
-          return cities.length ? cities : ['Pune', 'Jaipur', 'Mumbai', 'Delhi', 'Bengaluru']
-        } catch { return ['Pune', 'Jaipur', 'Mumbai', 'Delhi', 'Bengaluru'] }
+          return cities.length ? cities : ['Pune', 'Kolkata', 'Mumbai', 'Delhi', 'Bengaluru']
+        } catch { return ['Pune', 'Kolkata', 'Mumbai', 'Delhi', 'Bengaluru'] }
       }
     ),
   recyclers: (params = {}) =>

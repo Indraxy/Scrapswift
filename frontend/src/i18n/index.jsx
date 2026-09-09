@@ -1,4 +1,4 @@
-﻿import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 export const LANGUAGES = [
   { code: 'hi', label: 'हिंदी', speech: 'hi-IN' },
@@ -217,7 +217,7 @@ const en = {
   scalePhotoRequired: 'A photo of the scale is required before confirming the handover.',
   estimator: 'Value estimator',
   estimatorTitle: 'Estimate your scrap value',
-  estimatorIntro: 'Published Jaipur rates, adjusted for your area, quality and quantity.',
+  estimatorIntro: 'Published Kolkata rates, adjusted for your area, quality and quantity.',
   estimatorPickItem: 'Choose the item (highest paying first)',
   estimatorQuantity: 'Quantity',
   estimatorLocality: 'Area',
