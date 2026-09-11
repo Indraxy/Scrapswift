@@ -1025,7 +1025,7 @@ export const MATERIAL_NAMES = {
   PCB: { en: 'PCB (circuit board)', hi: 'पीसीबी (सर्किट बोर्ड)', bn: 'পিসিবি (সার্কিট বোর্ড)' },
   Cable: { en: 'Cable / wire', hi: 'तार / केबल', bn: 'তার / কেবল' },
   Battery: { en: 'Battery', hi: 'बैटरी', bn: 'ব্যাটারি' },
-  'LCD/LED panel': { en: 'LCD / LED panel', hi: 'एलसीडी / एलईडी स्क्रीन', bn: 'এলসিডি / এলఈডি স্ক্রিন' },
+  'LCD/LED panel': { en: 'LCD / LED panel', hi: 'एलसीडी / एलईडी स्क्रीन', bn: 'এলসিডি / এলইডি স্ক্রিন' },
   CRT: { en: 'CRT tube', hi: 'सीआरटी ट्यूब', bn: 'সিআরটি টিউব' },
   'Motor & magnet-bearing': { en: 'Motor / magnet part', hi: 'मोटर / मैगनेट वाला पुर्जा', bn: 'মোটর / ম্যাগনেট অংশ' },
   'Mixed plastic': { en: 'Mixed plastic', hi: 'मिला-जुला प्लास्टिक', bn: 'মিশ্র প্লাস্টিক' },

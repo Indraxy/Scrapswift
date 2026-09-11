@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Voice output.
  *
  * Two things broke Bengali before:
@@ -43,35 +43,78 @@ function loadVoices() {
   return voicesPromise
 }
 
-// Bengali -> Hindi is a genuine substitute (same script). Never fall back to
-// an English voice for Devanagari text: it is worse than silence.
-const FALLBACK_LANGS = {
-  'bn-IN': ['bn-IN', 'bn', 'hi-IN', 'hi'],
-  'hi-IN': ['hi-IN', 'hi', 'bn-IN', 'bn'],
-  'en-IN': ['en-IN', 'en-GB', 'en-US', 'en'],
+function findBengaliVoice(voices) {
+  if (!Array.isArray(voices) || !voices.length) return null
+
+  // 1. Exact or prefixed bn-IN / bn-BD
+  let match = voices.find((v) => {
+    const l = (v.lang || '').replace('_', '-').toLowerCase()
+    return l === 'bn-in' || l.startsWith('bn-in')
+  })
+  if (match) return match
+
+  // 2. Any Bengali locale (bn-BD, bn, etc.)
+  match = voices.find((v) => {
+    const l = (v.lang || '').replace('_', '-').toLowerCase()
+    return l === 'bn' || l.startsWith('bn-') || l.startsWith('bn_')
+  })
+  if (match) return match
+
+  // 3. Any voice containing Bengali / Bangla in name
+  match = voices.find((v) => {
+    const n = (v.name || '').toLowerCase()
+    return n.includes('bengali') || n.includes('bangla') || n.includes('বাংলা')
+  })
+  if (match) return match
+
+  return null
+}
+
+function findHindiVoice(voices) {
+  if (!Array.isArray(voices) || !voices.length) return null
+  return voices.find((v) => {
+    const l = (v.lang || '').replace('_', '-').toLowerCase()
+    return l === 'hi-in' || l.startsWith('hi')
+  }) || voices.find((v) => {
+    const n = (v.name || '').toLowerCase()
+    return n.includes('hindi') || n.includes('हिंदी')
+  })
+}
+
+function findEnglishVoice(voices) {
+  if (!Array.isArray(voices) || !voices.length) return null
+  return voices.find((v) => (v.lang || '').replace('_', '-').toLowerCase().startsWith('en-in'))
+    || voices.find((v) => (v.lang || '').replace('_', '-').toLowerCase().startsWith('en-gb'))
+    || voices.find((v) => (v.lang || '').replace('_', '-').toLowerCase().startsWith('en'))
+}
+
+function pickVoice(voices, langCode) {
+  const norm = (langCode || '').toLowerCase()
+  if (norm.startsWith('bn')) {
+    const voice = findBengaliVoice(voices)
+    return { voice, wanted: 'bn-IN' }
+  }
+  if (norm.startsWith('hi')) {
+    const voice = findHindiVoice(voices)
+    return { voice, wanted: 'hi-IN' }
+  }
+  if (norm.startsWith('en')) {
+    const voice = findEnglishVoice(voices)
+    return { voice, wanted: 'en-IN' }
+  }
+  return { voice: null, wanted: langCode }
 }
 
 let lastNote = ''
 /** '' when the requested language was spoken, otherwise what was used instead. */
 export function lastVoiceNote() { return lastNote }
 
-function pickVoice(voices, langCode) {
-  const chain = FALLBACK_LANGS[langCode] || [langCode, langCode.split('-')[0]]
-  for (const want of chain) {
-    const exact = voices.find((v) => v.lang?.replace('_', '-') === want)
-    if (exact) return { voice: exact, wanted: chain[0] }
-    const prefix = voices.find((v) => v.lang?.replace('_', '-').startsWith(want))
-    if (prefix) return { voice: prefix, wanted: chain[0] }
-  }
-  return { voice: null, wanted: chain[0] }
-}
-
 export async function speak(text, langCode = 'hi-IN') {
   if (!canSpeak() || !text) return
   try {
     window.speechSynthesis.cancel()
     const voices = await loadVoices()
-    const { voice } = pickVoice(voices, langCode)
+    const { voice, wanted } = pickVoice(voices, langCode)
 
     lastNote = ''
     const u = new SpeechSynthesisUtterance(text)
@@ -80,15 +123,12 @@ export async function speak(text, langCode = 'hi-IN') {
 
     if (voice) {
       u.voice = voice
-      u.lang = voice.lang
-      const base = langCode.split('-')[0]
-      if (!voice.lang?.toLowerCase().startsWith(base)) {
-        lastNote = `Spoken with a ${voice.lang} voice — no ${langCode} voice on this device.`
-      }
+      u.lang = voice.lang || wanted
     } else {
-      // No usable voice: still set the language and let the browser try.
-      u.lang = langCode
-      lastNote = `No ${langCode} voice is installed on this device.`
+      // Do not substitute with an incompatible voice (e.g. Hindi/Marathi for Bengali).
+      // Setting u.lang allows the browser's native/cloud TTS to speak in Bengali directly.
+      u.lang = wanted || langCode
+      lastNote = `Using browser default speech engine for ${u.lang}.`
     }
     window.speechSynthesis.speak(u)
   } catch {
@@ -110,22 +150,22 @@ const TREND_WORD = {
 export function priceSentence({ category, min, max, trend }, lang = 'hi') {
   const name = MATERIAL_NAMES[category]?.[lang] ?? category
   const t = TREND_WORD[lang]?.[trend] ?? ''
-  if (lang === 'hi') return `${name} का आज का अनुमानित भाव ${min} से ${max} रुपये प्रति কেজিग्राम है। ${t}।`
-  if (lang === 'bn') return `${name} এর আজকের আনুমানিক দাম ${min} থেকে ${max} টাকা প্রতি কেজি। ${t}.`
+  if (lang === 'hi') return `${name} का आज का अनुमानित भाव ${min} से ${max} रुपये प्रति किलोग्राम है। ${t}।`
+  if (lang === 'bn') return `${name}-এর আজকের আনুমানিক দাম ${min} থেকে ${max} টাকা প্রতি কেজি। ${t}।`
   return `Today's approximate rate for ${name} is ${min} to ${max} rupees per kilogram. ${t}.`
 }
 
 export function valueSentence({ category, weight, min, max }, lang = 'hi') {
   const name = MATERIAL_NAMES[category]?.[lang] ?? category
-  if (lang === 'hi') return `${weight} কেজি ${name} की अनुमानित कीमत ${min} से ${max} रुपये है।`
-  if (lang === 'bn') return `${weight} কেজি ${name} এর আনুমানিক দাম ${min} থেকে ${max} টাকা।`
+  if (lang === 'hi') return `${weight} किलो ${name} की अनुमानित कीमत ${min} से ${max} रुपये है।`
+  if (lang === 'bn') return `${weight} কেজি ${name}-এর আনুমানিক দাম ${min} থেকে ${max} টাকা।`
   return `${weight} kilograms of ${name} is worth approximately ${min} to ${max} rupees.`
 }
 
 /** Spoken read-back of what the voice input understood, before committing. */
 export function confirmSentence({ category, weight, min, max }, lang = 'hi') {
   const name = MATERIAL_NAMES[category]?.[lang] ?? category
-  if (lang === 'hi') return `${weight} কেজি ${name}। दाम लगभग ${min} से ${max} रुपये। सही है?`
+  if (lang === 'hi') return `${weight} किलो ${name}। दाम लगभग ${min} से ${max} रुपये। सही है?`
   if (lang === 'bn') return `${weight} কেজি ${name}। দাম আনুমানিক ${min} থেকে ${max} টাকা। ঠিক আছে?`
   return `${weight} kilograms of ${name}. Around ${min} to ${max} rupees. Is that correct?`
 }
@@ -133,12 +173,12 @@ export function confirmSentence({ category, weight, min, max }, lang = 'hi') {
 /** Spoken alarm when the recycler's figures do not match what was declared. */
 export function fairnessSentence({ declared, final, kind }, lang = 'hi') {
   if (kind === 'weight') {
-    if (lang === 'hi') return `ध्यान दीजिए। आपने ${declared} কেজি दिया था, ${final} কেজি लिखा जा रहा है। रुकिए और तौल दोबारा देखिए।`
-    if (lang === 'bn') return `লক্ষ্য করুন। আপনি ${declared} কেজি दिले होথেকে, ${final} কেজি লেখা হচ্ছে। থামুন এবং ওজন আবার চেক করুন।`
+    if (lang === 'hi') return `ध्यान दीजिए। आपने ${declared} किलो दिया था, ${final} किलो लिखा जा रहा है। रुकिए और तौल दोबारा देखिए।`
+    if (lang === 'bn') return `লক্ষ্য করুন। আপনি ${declared} কেজি দিয়েছিলেন, কিন্তু ${final} কেজি লেখা হচ্ছে। থামুন এবং ওজন আবার পরীক্ষা করুন।`
     return `Careful. You declared ${declared} kilograms but ${final} is being recorded. Check the scale.`
   }
   if (lang === 'hi') return `ध्यान दीजिए। जो दाम लिखा जा रहा है वह बाज़ार भाव से काफी कम है।`
-  if (lang === 'bn') return `লক্ষ্য করুন। লেখা দাম বাজার দরের চেয়ে অনেক কম।`
+  if (lang === 'bn') return `লক্ষ্য করুন। যে দাম লেখা হচ্ছে তা বাজার দরের চেয়ে অনেক কম।`
   return `Careful. The price being recorded is well below the market rate.`
 }
 
