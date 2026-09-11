@@ -19,7 +19,7 @@ from ..services.security import hash_password
 
 random.seed(26229)
 
-CITY = (26.9124, 75.7873)  # Jaipur
+CITY = (22.5726, 88.3639)  # Kolkata
 
 MATERIALS = [
     ("PCB", "Motherboards, RAM, adapters", "Printed circuit boards from computers and appliances",
@@ -41,48 +41,48 @@ MATERIALS = [
 ]
 
 COLLECTORS = [
-    ("Ramesh Kumar", "collector@demo.com", "hi", "Malviya Nagar, Jaipur", 26.8535, 75.8135),
-    ("Sunita Devi", "sunita@demo.com", "hi", "Sanganer, Jaipur", 26.8180, 75.7900),
-    ("Imran Shaikh", "imran@demo.com", "mr", "Jhotwara, Jaipur", 26.9440, 75.7480),
-    ("Lakshmi Bai", "lakshmi@demo.com", "hi", "Vaishali Nagar, Jaipur", 26.9120, 75.7370),
-    ("Govind Meena", "govind@demo.com", "hi", "Amer Road, Jaipur", 26.9800, 75.8500),
-    ("Prakash Jadhav", "prakash@demo.com", "mr", "Mansarovar, Jaipur", 26.8500, 75.7620),
-    ("Fatima Bano", "fatima@demo.com", "hi", "Ramganj, Jaipur", 26.9220, 75.8300),
-    ("Deepak Yadav", "deepak@demo.com", "hi", "Jagatpura, Jaipur", 26.8180, 75.8620),
-    ("Sanjay More", "sanjay@demo.com", "mr", "Bais Godam, Jaipur", 26.9010, 75.7830),
-    ("Kavita Sharma", "kavita@demo.com", "en", "C-Scheme, Jaipur", 26.9070, 75.7930),
+    ("Ramesh Kumar", "collector@demo.com", "hi", "Jadavpur, Kolkata", 22.4979, 88.3714),
+    ("Sunita Devi", "sunita@demo.com", "hi", "Garia, Kolkata", 22.4627, 88.3870),
+    ("Imran Shaikh", "imran@demo.com", "bn", "Park Circus, Kolkata", 22.5414, 88.3666),
+    ("Lakshmi Bai", "lakshmi@demo.com", "hi", "Behala, Kolkata", 22.4986, 88.3091),
+    ("Govind Meena", "govind@demo.com", "hi", "Dum Dum, Kolkata", 22.6548, 88.3971),
+    ("Prakash Jadhav", "prakash@demo.com", "bn", "Howrah, Kolkata", 22.5958, 88.2636),
+    ("Fatima Bano", "fatima@demo.com", "hi", "New Town, Kolkata", 22.5958, 88.4804),
+    ("Deepak Yadav", "deepak@demo.com", "hi", "Salt Lake, Kolkata", 22.5745, 88.4135),
+    ("Sanjay More", "sanjay@demo.com", "bn", "Anandapur, Kolkata", 22.5138, 88.4063),
+    ("Kavita Sharma", "kavita@demo.com", "en", "Park Street, Kolkata", 22.5520, 88.3512),
 ]
 
 # name, email(optional), location, lat, lng, materials, auth id, status, contact,
 # rate multiplier, pickup, service radius
 RECYCLERS = [
-    ("Green Recyclers", "recycler@demo.com", "Ajmer Road Industrial Belt, Jaipur",
-     26.9130, 75.7830,
+    ("Green Recyclers", "recycler@demo.com", "Taratala Industrial Belt, Kolkata",
+     22.5145, 88.3212,
      ["PCB", "Cable", "Battery", "Motor", "Magnet-bearing Assembly", "LCD"],
      "AUTH-12345", "approved", "+91 98290 10001", 1.03, True, 25),
-    ("Aravalli E-Waste Pvt Ltd", "aravalli@demo.com", "Sitapura Industrial Area, Jaipur",
-     26.7860, 75.8480, ["PCB", "LCD", "CRT", "Mixed Plastic", "Cable"],
+    ("Hooghly E-Waste Pvt Ltd", "aravalli@demo.com", "Shibpur Industrial Area, Howrah",
+     22.5762, 88.3007, ["PCB", "LCD", "CRT", "Mixed Plastic", "Cable"],
      "AUTH-20871", "approved", "+91 98290 10002", 0.98, True, 30),
-    ("Pink City Metals", "pinkcity@demo.com", "Bais Godam, Jaipur", 26.8890, 75.7720,
+    ("Sunrise Metal Recovery", "pinkcity@demo.com", "Topsia, Kolkata", 22.5437, 88.3852,
      ["Cable", "Motor", "Magnet-bearing Assembly"],
      "AUTH-30442", "approved", "+91 98290 10003", 1.01, False, 15),
-    ("Jaipur Circular Systems", None, "Jhotwara Industrial Area, Jaipur", 26.9490, 75.7350,
+    ("Kolkata Circular Systems", None, "Ultadanga Industrial Area, Kolkata", 22.5924, 88.3929,
      ["PCB", "Battery", "Mixed Plastic"], "AUTH-40113", "approved", "+91 98290 10004",
      0.96, True, 20),
-    ("Marudhara Recycling", None, "Bagru, Jaipur", 26.8130, 75.5460,
+    ("Ganges Recycling Co.", None, "Garden Reach, Kolkata", 22.5299, 88.2910,
      ["CRT", "LCD", "Mixed Plastic", "Motor"], "AUTH-50219", "approved",
      "+91 98290 10005", 0.94, False, 35),
-    ("Chambal Green Loop", None, "Kota Road, Jaipur", 26.7600, 75.8100,
+    ("Sundarbans Green Loop", None, "Bantala, Kolkata", 22.4682, 88.4574,
      ["Battery", "PCB", "Cable"], "AUTH-60777", "approved", "+91 98290 10006", 1.00, True, 28),
-    ("Suraj Metal Recovery", None, "Sanganer, Jaipur", 26.8210, 75.7880,
+    ("Suraj Metal Recovery", None, "Dum Dum Industrial Belt, Kolkata", 22.6478, 88.4012,
      ["Cable", "Motor", "Mixed Plastic"], "AUTH-70884", "approved",
      "+91 98290 10007", 0.97, True, 18),
-    ("Nirmal Urban Mining", None, "Kukas, Jaipur", 27.0480, 75.9120,
+    ("Nirmal Urban Mining", None, "New Town Tech Zone, Kolkata", 22.6011, 88.4742,
      ["PCB", "Magnet-bearing Assembly", "LCD", "Battery"], "AUTH-80990", "approved",
      "+91 98290 10008", 1.02, True, 32),
-    ("Shakti Waste Solutions", None, "Chomu, Jaipur", 27.1670, 75.7220,
+    ("Shakti Waste Solutions", None, "Barrackpore, Kolkata", 22.7637, 88.3699,
      ["Cable", "Battery", "CRT"], "AUTH-90551", "pending", "+91 98290 10009", 0.99, True, 25),
-    ("Vasundhara Recyclers", None, "Tonk Road, Jaipur", 26.8020, 75.8060,
+    ("Hooghly Recyclers", None, "Behala, Kolkata", 22.4987, 88.3094,
      ["PCB", "LCD", "Mixed Plastic"], "AUTH-91662", "pending", "+91 98290 10010", 1.00, False, 20),
 ]
 

@@ -55,11 +55,11 @@ const RECYCLERS = [
 
 const DEMO_PCB = {
   'Green Recyclers': 195,
-  'Aravalli E-Waste Pvt Ltd': 186,
+  'Bengal E-Waste Pvt Ltd': 186,
   'Kolkata Circular Systems': 178,
-  'Chambal Green Loop': 189,
-  'Nirmal Urban Mining': 188,
-  'Vasundhara Recyclers': 184,
+  'Ganga Green Loop': 189,
+  'Rajarhat Urban Mining': 188,
+  'Kalighat Recyclers': 184,
 }
 
 export const WEIGHTS = { authorization: 0.4, price: 0.25, distance: 0.15, pickup: 0.1, material: 0.1 }
