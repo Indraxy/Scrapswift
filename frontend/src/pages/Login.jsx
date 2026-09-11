@@ -23,7 +23,7 @@ export default function Login() {
   // checked against the role the backend actually returns.
   const [role, setRole] = useState('collector')
   const [name, setName] = useState('')
-  const [area, setArea] = useState('Pune')
+  const [area, setArea] = useState('Salt Lake (Bidhannagar)')
   const [cities, setCities] = useState([])
 
   const routeFor = (role) => (role === 'admin' ? '/admin' : role === 'recycler' ? '/recycler' : '/app')

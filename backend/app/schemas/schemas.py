@@ -44,10 +44,9 @@ class RegisterIn(BaseModel):
     # recycler dataset for that city unless the device supplies a real fix —
     # the old Jaipur default sat 700 km from every recycler in the dataset,
     # so a new account could never match anyone.
-    operating_location: str = "Pune"
+    operating_location: str = "Salt Lake (Bidhannagar)"
     latitude: float | None = None
     longitude: float | None = None
-    role: str = 'collector'
     role: str = "collector"
 
 

@@ -28,29 +28,29 @@ export const MATERIALS = [
 ]
 
 const COLLECTORS = [
-  ['Ramesh Kumar', 'collector@demo.com', 'hi', 'Anandapur, Kolkata', 22.5135, 88.3935],
-  ['Sunita Devi', 'sunita@demo.com', 'hi', 'Jadavpur, Kolkata', 22.4980, 88.3700],
-  ['Imran Shaikh', 'imran@demo.com', 'bn', 'Dum Dum, Kolkata', 22.6240, 88.4280],
-  ['Lakshmi Bai', 'lakshmi@demo.com', 'hi', 'Salt Lake, Kolkata', 22.5720, 88.4170],
-  ['Govind Meena', 'govind@demo.com', 'hi', 'Baranagar, Kolkata', 22.6400, 88.3700],
-  ['Prakash Jadhav', 'prakash@demo.com', 'bn', 'Behala, Kolkata', 22.5100, 88.3420],
-  ['Fatima Bano', 'fatima@demo.com', 'hi', 'Park Street, Kolkata', 22.5520, 88.3600],
-  ['Deepak Yadav', 'deepak@demo.com', 'hi', 'Garia, Kolkata', 22.4680, 88.3820],
-  ['Sanjay More', 'sanjay@demo.com', 'bn', 'Howrah, Kolkata', 22.5610, 88.3230],
-  ['Kavita Sharma', 'kavita@demo.com', 'en', 'New Town, Kolkata', 22.5870, 88.4630],
+  ['Ramesh Kumar', 'collector@demo.com', 'hi', 'Salt Lake (Bidhannagar)', 22.5867, 88.4178],
+  ['Sunita Devi', 'sunita@demo.com', 'hi', 'New Town', 22.5899, 88.4744],
+  ['Imran Shaikh', 'imran@demo.com', 'bn', 'Park Street', 22.5510, 88.3524],
+  ['Lakshmi Bai', 'lakshmi@demo.com', 'hi', 'Ballygunge', 22.5280, 88.3656],
+  ['Govind Meena', 'govind@demo.com', 'hi', 'Gariahat', 22.5186, 88.3644],
+  ['Prakash Jadhav', 'prakash@demo.com', 'bn', 'Behala', 22.4988, 88.3149],
+  ['Fatima Bano', 'fatima@demo.com', 'hi', 'Tollygunge', 22.4984, 88.3454],
+  ['Deepak Yadav', 'deepak@demo.com', 'hi', 'Dum Dum', 22.6420, 88.4312],
+  ['Sanjay More', 'sanjay@demo.com', 'bn', 'Rajarhat', 22.6100, 88.4800],
+  ['Kavita Sharma', 'kavita@demo.com', 'en', 'Howrah', 22.5958, 88.2636],
 ]
 
 const RECYCLERS = [
-  ['Green Recyclers', 'recycler@demo.com', 'Tangra Industrial Belt, Kolkata', 22.5530, 88.3830, ['PCB', 'Cable', 'Battery', 'Motor & magnet-bearing', 'LCD/LED panel'], 'AUTH-12345', 'approved', '+91 98290 10001', 1.03, true, 25],
-  ['Bengal E-Waste Pvt Ltd', 'aravalli@demo.com', 'Kasba Industrial Area, Kolkata', 22.5160, 88.3880, ['PCB', 'LCD/LED panel', 'CRT', 'Mixed plastic', 'Cable'], 'AUTH-20871', 'approved', '+91 98290 10002', 0.98, true, 30],
-  ['Hooghly Metals', null, 'Howrah, Kolkata', 22.5490, 88.3120, ['Cable', 'Motor & magnet-bearing'], 'AUTH-30442', 'approved', '+91 98290 10003', 1.01, false, 15],
-  ['Kolkata Circular Systems', null, 'Dum Dum Industrial Area, Kolkata', 22.6290, 88.4350, ['PCB', 'Battery', 'Mixed plastic'], 'AUTH-40113', 'approved', '+91 98290 10004', 0.96, true, 20],
-  ['Sundarbans Recycling', null, 'Baruipur, Kolkata', 22.3530, 88.4360, ['CRT', 'LCD/LED panel', 'Mixed plastic', 'Motor & magnet-bearing'], 'AUTH-50219', 'approved', '+91 98290 10005', 0.94, false, 35],
-  ['Ganga Green Loop', null, 'Barrackpore, Kolkata', 22.7600, 88.3700, ['Battery', 'PCB', 'Cable'], 'AUTH-60777', 'approved', '+91 98290 10006', 1.0, true, 28],
-  ['Sealdah Metal Recovery', null, 'Sealdah, Kolkata', 22.5710, 88.3680, ['Cable', 'Motor & magnet-bearing', 'Mixed plastic'], 'AUTH-70884', 'approved', '+91 98290 10007', 0.97, true, 18],
-  ['Rajarhat Urban Mining', null, 'Rajarhat, Kolkata', 22.6080, 88.4920, ['PCB', 'Motor & magnet-bearing', 'LCD/LED panel', 'Battery'], 'AUTH-80990', 'approved', '+91 98290 10008', 1.02, true, 32],
-  ['Shakti Waste Solutions', null, 'Baranagar, Kolkata', 22.6370, 88.3720, ['Cable', 'Battery', 'CRT'], 'AUTH-90551', 'pending', '+91 98290 10009', 0.99, true, 25],
-  ['Kalighat Recyclers', null, 'Tollygunge, Kolkata', 22.5020, 88.3460, ['PCB', 'LCD/LED panel', 'Mixed plastic'], 'AUTH-91662', 'pending', '+91 98290 10010', 1.0, false, 20],
+  ['Green Recyclers', 'recycler@demo.com', 'Salt Lake (Bidhannagar)', 22.5867, 88.4178, ['PCB', 'Cable', 'Battery', 'Motor & magnet-bearing', 'LCD/LED panel'], 'AUTH-12345', 'approved', '+91 98290 10001', 1.03, true, 25],
+  ['Bengal E-Waste Pvt Ltd', 'aravalli@demo.com', 'New Town', 22.5899, 88.4744, ['PCB', 'LCD/LED panel', 'CRT', 'Mixed plastic', 'Cable'], 'AUTH-20871', 'approved', '+91 98290 10002', 0.98, true, 30],
+  ['Hooghly Metals', null, 'Park Street', 22.5510, 88.3524, ['Cable', 'Motor & magnet-bearing'], 'AUTH-30442', 'approved', '+91 98290 10003', 1.01, false, 15],
+  ['Kolkata Circular Systems', null, 'Ballygunge', 22.5280, 88.3656, ['PCB', 'Battery', 'Mixed plastic'], 'AUTH-40113', 'approved', '+91 98290 10004', 0.96, true, 20],
+  ['Sundarbans Recycling', null, 'Gariahat', 22.5186, 88.3644, ['CRT', 'LCD/LED panel', 'Mixed plastic', 'Motor & magnet-bearing'], 'AUTH-50219', 'approved', '+91 98290 10005', 0.94, false, 35],
+  ['Ganga Green Loop', null, 'Behala', 22.4988, 88.3149, ['Battery', 'PCB', 'Cable'], 'AUTH-60777', 'approved', '+91 98290 10006', 1.0, true, 28],
+  ['Sealdah Metal Recovery', null, 'Tollygunge', 22.4984, 88.3454, ['Cable', 'Motor & magnet-bearing', 'Mixed plastic'], 'AUTH-70884', 'approved', '+91 98290 10007', 0.97, true, 18],
+  ['Rajarhat Urban Mining', null, 'Dum Dum', 22.6420, 88.4312, ['PCB', 'Motor & magnet-bearing', 'LCD/LED panel', 'Battery'], 'AUTH-80990', 'approved', '+91 98290 10008', 1.02, true, 32],
+  ['Shakti Waste Solutions', null, 'Rajarhat', 22.6100, 88.4800, ['Cable', 'Battery', 'CRT'], 'AUTH-90551', 'pending', '+91 98290 10009', 0.99, true, 25],
+  ['Kalighat Recyclers', null, 'Howrah', 22.5958, 88.2636, ['PCB', 'LCD/LED panel', 'Mixed plastic'], 'AUTH-91662', 'pending', '+91 98290 10010', 1.0, false, 20],
 ]
 
 const DEMO_PCB = {
@@ -133,7 +133,10 @@ function seed() {
     })
   })
 
-  const locations = ['Anandapur, Kolkata', 'Jadavpur, Kolkata', 'Tangra Industrial Belt, Kolkata']
+  const locations = [
+    'Salt Lake (Bidhannagar)', 'New Town', 'Park Street', 'Ballygunge', 'Gariahat',
+    'Behala', 'Tollygunge', 'Dum Dum', 'Rajarhat', 'Howrah',
+  ]
   MATERIALS.forEach((m) => {
     for (let day = 90; day >= 0; day -= 1) {
       const date = t0 - day * DAY

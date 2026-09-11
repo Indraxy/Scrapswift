@@ -6,8 +6,16 @@ import { Loading, Notice, SpeakButton, rupee } from '../../components/ui'
 
 const QUALITY = ['clean', 'mixed', 'dirty', 'damaged']
 const LOCALITIES = [
-  'Kolkata', 'Anandapur', 'Salt Lake', 'New Town', 'Park Street',
-  'Jadavpur', 'Dum Dum', 'Behala', 'Howrah', 'Garia',
+  'Salt Lake (Bidhannagar)',
+  'New Town',
+  'Park Street',
+  'Ballygunge',
+  'Gariahat',
+  'Behala',
+  'Tollygunge',
+  'Dum Dum',
+  'Rajarhat',
+  'Howrah',
 ]
 
 /**
@@ -25,7 +33,7 @@ export default function Estimate() {
   const [category, setCategory] = useState('Plastic')
   const [material, setMaterial] = useState('')
   const [quantity, setQuantity] = useState('')
-  const [locality, setLocality] = useState('Kolkata')
+  const [locality, setLocality] = useState('Salt Lake (Bidhannagar)')
   const [quality, setQuality] = useState('mixed')
   const [result, setResult] = useState(null)
   const [busy, setBusy] = useState(false)

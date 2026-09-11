@@ -29,7 +29,7 @@ class PredictIn(BaseModel):
     material: str
     quantity: float = Field(gt=0, le=100000)
     unit: str | None = None
-    locality: str = "Jaipur"
+    locality: str = "Salt Lake (Bidhannagar)"
     quality: str = "mixed"
 
     @field_validator("quality")
@@ -63,8 +63,8 @@ def scrap_materials(category: str | None = None):
         "count": len(items),
         "categories": sorted({i["category"] for i in items}),
         "items": items,
-        "source": "https://www.thekabadiwala.com/scrap-rates/Jaipur",
-        "note": "Published reference rates, transcribed. Not real-time.",
+        "source": "https://www.thekabadiwala.com/scrap-rates/Kolkata",
+        "note": "Published reference rates, Kolkata. Not real-time.",
     }
 
 

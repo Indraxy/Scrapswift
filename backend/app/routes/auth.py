@@ -46,7 +46,7 @@ def _resolve_city(db: Session, place: str) -> tuple[str, float, float]:
     instead of at a hardcoded point in another state.
     """
     place = (place or "").strip()
-    city = place.split(",")[-1].strip() or "Pune"
+    city = place.split(",")[-1].strip() or "Salt Lake (Bidhannagar)"
     rows = db.query(Recycler).filter(Recycler.city.isnot(None)).all()
     matches = [r for r in rows if r.city and r.city.lower() == city.lower()]
     if not matches:  # unknown city: fall back to the busiest one we have

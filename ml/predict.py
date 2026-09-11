@@ -24,7 +24,7 @@ MODEL = ROOT / "ml" / "scrap_price_model.pkl"
 TRANSACTIONS = ROOT / "data" / "scrap_transactions.csv"
 
 DISCLAIMER = (
-    "Estimated from published Jaipur scrap rates. Actual kabadiwala rates vary "
+    "Estimated from published Kolkata scrap rates. Actual kabadiwala rates vary "
     "with quality, quantity and local market conditions."
 )
 
@@ -85,7 +85,7 @@ def _find(material: str) -> dict | None:
 
 
 def estimate_value(category: str, material: str, quantity: float,
-                   unit: str | None = None, locality: str = "Jaipur",
+                   unit: str | None = None, locality: str = "Salt Lake (Bidhannagar)",
                    quality: str = "mixed") -> dict:
     if quantity is None or float(quantity) <= 0:
         raise ValueError("quantity must be greater than zero")
@@ -195,7 +195,7 @@ def analytics() -> dict:
         ],
         "plastic": [m for m in list_materials("Plastic") if m["buys"]][:8],
         "ewaste": [m for m in list_materials("E-waste") if m["buys"]][:8],
-        "note": "Published reference rates, Jaipur. Localities share the city rate list.",
+        "note": "Published reference rates, Kolkata. Localities share the city rate list.",
     }
 
 

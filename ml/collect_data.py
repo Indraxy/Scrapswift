@@ -37,17 +37,22 @@ from pathlib import Path
 
 SOURCE_URL = "https://www.thekabadiwala.com/scrap-rates/Jaipur"
 CAPTURE_DATE = "2026-08-31"
-CITY = "Jaipur"
+CITY = "Kolkata"
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
-# Localities listed on the Jaipur page. Verified: they serve the same rates.
+# Localities in Kolkata
 JAIPUR_LOCALITIES = [
-    "Malviya Nagar", "Vaishali Nagar", "Mansarovar", "C-Scheme", "Raja Park",
-    "Adarsh Nagar", "Tonk Road", "Shyam Nagar", "Civil Lines", "Sodala",
-    "Nirman Nagar", "Gopalpura", "Durgapura", "Barkat Nagar", "Mahesh Nagar",
-    "MI Road", "Chandpole", "Hasanpura", "Patrakar Colony", "Model Town",
-    "Airport Area", "Ramnagariya",
+    "Salt Lake (Bidhannagar)",
+    "New Town",
+    "Park Street",
+    "Ballygunge",
+    "Gariahat",
+    "Behala",
+    "Tollygunge",
+    "Dum Dum",
+    "Rajarhat",
+    "Howrah",
 ]
 
 # (material, category, item_type, price, unit) exactly as published.
