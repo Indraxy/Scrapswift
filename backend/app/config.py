@@ -26,10 +26,24 @@ def _load_dotenv() -> None:
 _load_dotenv()
 
 
+def _get_database_url() -> str:
+    url = os.environ.get("DATABASE_URL")
+    if not url or not url.strip():
+        return f"sqlite:///{BASE_DIR / 'kabadiwala.db'}"
+    url = url.strip().strip("'").strip('"')
+    if not url:
+        return f"sqlite:///{BASE_DIR / 'kabadiwala.db'}"
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    elif url.startswith("postgres+psycopg2://"):
+        url = url.replace("postgres+psycopg2://", "postgresql+psycopg2://", 1)
+    return url
+
+
 class Settings:
     APP_NAME = "Kabadiwala Connect API"
     VERSION = "1.0.0"
-    DATABASE_URL = os.environ.get("DATABASE_URL") or f"sqlite:///{BASE_DIR / 'kabadiwala.db'}"
+    DATABASE_URL = _get_database_url()
     SECRET_KEY = os.environ.get("SECRET_KEY", "kabadiwala-connect-prototype-secret")
     CORS_ORIGINS = [
         o.strip()
@@ -40,6 +54,7 @@ class Settings:
     ]
     TOKEN_TTL_SECONDS = 60 * 60 * 12
     UPLOAD_DIR = BASE_DIR / "uploads"
+
 
 
 settings = Settings()
