@@ -1,12 +1,16 @@
 fastapi==0.115.0
 uvicorn[standard]==0.30.6
-SQLAlchemy==2.0.35
-pydantic==2.9.2
+# SQLAlchemy==2.0.35
+# pydantic==2.9.2
+pydantic-core
 pydantic-settings==2.5.2
 python-multipart==0.0.9
-psycopg2-binary==2.9.9
+# psycopg2-binary==2.9.9
 Pillow==11.3.0
 scikit-learn==1.8.0
 scikit-image
 pandas
 joblib==1.4.2
+sqlalchemy
+
+psycopg2-binary
