@@ -26,10 +26,24 @@ def _load_dotenv() -> None:
 _load_dotenv()
 
 
+import urllib.parse
+
+
 def _get_database_url() -> str:
     url = os.environ.get("DATABASE_URL")
     if not url or not url.strip():
+        # Check if individual Supabase connection parameters are set
+        user = os.environ.get("user") or os.environ.get("DB_USER")
+        password = os.environ.get("password") or os.environ.get("DB_PASSWORD")
+        host = os.environ.get("host") or os.environ.get("DB_HOST")
+        port = os.environ.get("port") or os.environ.get("DB_PORT", "5432")
+        dbname = os.environ.get("dbname") or os.environ.get("DB_NAME", "postgres")
+
+        if host and user and password:
+            encoded_password = urllib.parse.quote_plus(password)
+            return f"postgresql+psycopg2://{user}:{encoded_password}@{host}:{port}/{dbname}?sslmode=require"
         return f"sqlite:///{BASE_DIR / 'kabadiwala.db'}"
+
     url = url.strip().strip("'").strip('"')
     if not url:
         return f"sqlite:///{BASE_DIR / 'kabadiwala.db'}"
@@ -38,6 +52,7 @@ def _get_database_url() -> str:
     elif url.startswith("postgres+psycopg2://"):
         url = url.replace("postgres+psycopg2://", "postgresql+psycopg2://", 1)
     return url
+
 
 
 class Settings:
