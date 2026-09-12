@@ -91,6 +91,12 @@ kabadiwala-connect/
 ```bash
 cd backend
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
+
+# or
+
+python -m venv .venv ; .venv\Scripts\activate
+
+
 pip install -r requirements.txt
 cp .env.example .env                                   # optional
 python -m app.seed.seed                                # creates + seeds the database
