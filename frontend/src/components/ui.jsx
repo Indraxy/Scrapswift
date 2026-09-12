@@ -1,4 +1,4 @@
-import { ArrowRight, MoveRight, TrendingDown, TrendingUp, Volume2 } from 'lucide-react'
+import { ArrowRight, ChevronRight, MoveRight, TrendingDown, TrendingUp, Volume2 } from 'lucide-react'
 import { useI18n } from '../i18n'
 import { speak } from '../services/voice'
 
@@ -105,15 +105,32 @@ export function RateBoard({ rows, onSelect, compact = false }) {
   )
 }
 
-export function Stat({ label, value, sub, tone = 'plain' }) {
+export function Stat({ label, value, sub, tone = 'plain', onClick, actionLabel }) {
   const tones = {
     plain: 'bg-white',
     board: 'bg-board text-white',
     brass: 'bg-brass text-ink',
   }
+  const interactiveClasses = onClick
+    ? 'cursor-pointer hover:shadow-plate transition-all active:translate-x-[1px] active:translate-y-[1px] group'
+    : ''
   return (
-    <div className={`plate p-3.5 ${tones[tone]}`}>
-      <div className={`eyebrow ${tone === 'board' ? 'text-white/60' : ''}`}>{label}</div>
+    <div
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
+      className={`plate p-3.5 relative ${tones[tone]} ${interactiveClasses}`}
+    >
+      <div className="flex items-center justify-between">
+        <div className={`eyebrow ${tone === 'board' ? 'text-white/60' : ''}`}>{label}</div>
+        {onClick && (
+          <ChevronRight
+            size={14}
+            className={`opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all ${tone === 'board' ? 'text-white' : 'text-ink'}`}
+          />
+        )}
+      </div>
       <div className="num mt-1 text-2xl font-bold leading-none">{value}</div>
       {sub && <div className={`mt-1 text-xs ${tone === 'board' ? 'text-white/70' : 'text-slate2'}`}>{sub}</div>}
     </div>
