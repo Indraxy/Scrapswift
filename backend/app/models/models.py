@@ -149,6 +149,7 @@ class Lot(Base):
     created_offline: Mapped[bool] = mapped_column(Boolean, default=False)
     description: Mapped[str] = mapped_column(Text, default="")
     photo: Mapped[str] = mapped_column(Text, default="")  # data URL or /uploads path
+    image_fingerprint: Mapped[str] = mapped_column(String(64), default="", index=True)
     weight: Mapped[float] = mapped_column(Float)
     condition: Mapped[str] = mapped_column(String(20), default="good")
     source_type: Mapped[str] = mapped_column(String(30), default="household")

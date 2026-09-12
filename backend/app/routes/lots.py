@@ -1,6 +1,9 @@
+import base64
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from ..ai.fingerprint import check_duplicate_lot, compute_fingerprint
 from ..database import get_db
 from ..models import Collector, Lot, Recycler, Transaction, User
 from ..schemas.schemas import LotCreateIn, SelectRecyclerIn, SyncLotsIn
@@ -22,12 +25,26 @@ def _create_lot(db: Session, collector: Collector, payload: LotCreateIn) -> Lot:
         db, payload.material_category, payload.weight, payload.condition,
         payload.source_type, location,
     )
+
+    fingerprint = payload.image_fingerprint or ""
+    dup_info = None
+    if payload.photo:
+        raw = payload.photo.split(",", 1)[-1]
+        try:
+            img_bytes = base64.b64decode(raw)
+            if not fingerprint:
+                fingerprint = compute_fingerprint(img_bytes)
+            dup_info = check_duplicate_lot(db, img_bytes)
+        except Exception:
+            pass
+
     lot = Lot(
         lot_id=next_lot_id(db),
         collector_id=collector.collector_id,
         material_category=payload.material_category,
         description=payload.description,
         photo=payload.photo,
+        image_fingerprint=fingerprint,
         weight=payload.weight,
         condition=payload.condition,
         source_type=payload.source_type,
@@ -44,6 +61,12 @@ def _create_lot(db: Session, collector: Collector, payload: LotCreateIn) -> Lot:
     db.flush()
     log_event(db, lot.lot_id, "LOT_CREATED", f"{payload.weight} kg {payload.material_category}",
               actor=collector.display_name)
+    if dup_info and dup_info.get("is_duplicate"):
+        log_event(
+            db, lot.lot_id, "DUPLICATE_FLAGGED",
+            f"Photo matches Lot #{dup_info['duplicate_of_lot']} ({dup_info['similarity_pct']}% visual similarity)",
+            actor="anti-fraud-system",
+        )
     log_event(db, lot.lot_id, "PRICE_ESTIMATED",
               f"₹{est['estimated_min']:.0f} – ₹{est['estimated_max']:.0f}")
     return lot

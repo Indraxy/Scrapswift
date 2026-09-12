@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Camera, Check, ChevronLeft, ImageUp, MapPin, Mic, Sparkles, X } from 'lucide-react'
+import { AlertTriangle, Camera, Check, ChevronLeft, Fingerprint, ImageUp, MapPin, Mic, Sparkles, X } from 'lucide-react'
 import { MATERIAL_NAMES, useI18n } from '../../i18n'
 import { catalog, lots as lotsApi } from '../../services/api'
 import { saveDraft } from '../../offline/db'
@@ -152,6 +152,7 @@ export default function NewLot() {
       condition,
       source_type: source,
       photo,
+      image_fingerprint: prediction?.fingerprint || '',
       description: '',
       ai_prediction: prediction || {},
       // Approximate collection point; falls back to the registered area.
@@ -352,10 +353,26 @@ export default function NewLot() {
               <p className="num mt-1 text-[10px] text-slate2/80">
                 {t('checkedBy')}: {prediction.model_version}
               </p>
+              {prediction.fingerprint && (
+                <p className="num mt-1 flex items-center gap-1 text-[10px] text-slate2/80">
+                  <Fingerprint size={12} /> Fingerprint: #{prediction.fingerprint}
+                </p>
+              )}
             </div>
           ) : prediction ? (
             <div className="plate-lg p-4">
               <VerdictBadge prediction={prediction} />
+              {prediction.is_duplicate && (
+                <div className="mt-3 rounded-none border-2 border-copper bg-copper/10 p-3 text-ink">
+                  <div className="flex items-center gap-1.5 font-bold text-sm text-copper">
+                    <AlertTriangle size={17} className="shrink-0" />
+                    <span>Duplicate Photo Warning ({prediction.similarity_pct}% visual match)</span>
+                  </div>
+                  <p className="mt-1 text-xs text-slate2">
+                    This photo visually matches existing Lot #{prediction.duplicate_of_lot}. Please ensure you are photographing a genuine new scrap lot.
+                  </p>
+                </div>
+              )}
               <div className="eyebrow mt-2 flex items-center gap-1">
                 <Sparkles size={13} /> {t('likelyMaterial')}
               </div>
@@ -376,6 +393,11 @@ export default function NewLot() {
               <p className="num mt-1 text-[10px] text-slate2/80">
                 {t('checkedBy')}: {prediction.model_version}
               </p>
+              {prediction.fingerprint && (
+                <p className="num mt-1 flex items-center gap-1 text-[10px] text-slate2/80">
+                  <Fingerprint size={12} /> Fingerprint: #{prediction.fingerprint}
+                </p>
+              )}
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <button className="btn-primary" onClick={() => { setCategory(prediction.category); setStep(4) }}>
                   <Check size={18} /> {t('correct')}

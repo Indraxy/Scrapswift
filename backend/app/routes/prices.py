@@ -4,6 +4,7 @@ from fastapi import APIRouter, Body, Depends, File, Form, UploadFile
 from sqlalchemy.orm import Session
 
 from ..ai.classifier import classify
+from ..ai.fingerprint import check_duplicate_lot
 from ..database import get_db
 from ..models import Material, Price
 from ..schemas.schemas import ClassifyOut
@@ -65,13 +66,18 @@ def estimate(
     return result
 
 
-def _as_out(p) -> ClassifyOut:
+def _as_out(p, dup_info: dict | None = None) -> ClassifyOut:
+    dup = dup_info or {}
     return ClassifyOut(
         category=p.category, confidence=p.confidence, verdict=p.verdict,
         is_ewaste=p.is_ewaste, reason=p.reason, detail=p.detail,
         alternatives=p.alternatives, features=p.features,
         device=p.device, device_mapping=p.device_mapping,
         model_version=p.model_version, note=p.note,
+        fingerprint=dup.get("fingerprint", getattr(p, "fingerprint", "")),
+        is_duplicate=dup.get("is_duplicate", getattr(p, "is_duplicate", False)),
+        duplicate_of_lot=dup.get("duplicate_of_lot", getattr(p, "duplicate_of_lot", None)),
+        similarity_pct=dup.get("similarity_pct", getattr(p, "similarity_pct", 0.0)),
     )
 
 
@@ -80,6 +86,7 @@ async def classify_material(
     file: UploadFile | None = File(default=None),
     image_base64: str | None = Form(default=None),
     hint: str | None = Form(default=None),
+    db: Session = Depends(get_db),
 ):
     """Accepts multipart file upload or a base64 data URL (offline sync path)."""
     if file is not None:
@@ -92,14 +99,21 @@ async def classify_material(
             data = payload.encode()
     else:
         data = b"empty"
-    return _as_out(classify(data, hint))
+    pred = classify(data, hint)
+    dup = check_duplicate_lot(db, data) if data and data != b"empty" else {}
+    return _as_out(pred, dup)
 
 
 @router.post("/ai/classify-material-json", response_model=ClassifyOut)
-async def classify_material_json(payload: dict = Body(...)):
+async def classify_material_json(
+    payload: dict = Body(...),
+    db: Session = Depends(get_db),
+):
     raw = (payload.get("image_base64") or "").split(",", 1)[-1]
     try:
         data = base64.b64decode(raw) if raw else b"empty"
     except Exception:
         data = raw.encode()
-    return _as_out(classify(data, payload.get("hint")))
+    pred = classify(data, payload.get("hint"))
+    dup = check_duplicate_lot(db, data) if data and data != b"empty" else {}
+    return _as_out(pred, dup)

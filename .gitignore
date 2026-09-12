@@ -1,4 +1,4 @@
-﻿# Environment files — never commit credentials
+# Environment files — never commit credentials
 .env
 .env.local
 .env.*.local
@@ -24,3 +24,7 @@ __pycache__/
 *.db
 *.db-journal
 *.sqlite3
+
+# Large ML Image Datasets (keep trained .pkl models, ignore raw gigabyte images)
+ml/images/data/
+ml/images/modified-dataset/

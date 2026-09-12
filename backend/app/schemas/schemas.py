@@ -116,6 +116,10 @@ class ClassifyOut(BaseModel):
     device_mapping: dict[str, Any] = Field(default_factory=dict)
     model_version: str
     note: str
+    fingerprint: str = ""
+    is_duplicate: bool = False
+    duplicate_of_lot: str | None = None
+    similarity_pct: float = 0.0
 
 
 class LotCreateIn(BaseModel):
@@ -125,6 +129,7 @@ class LotCreateIn(BaseModel):
     source_type: str = "household"
     description: str = ""
     photo: str = ""
+    image_fingerprint: str = ""
     location: str = ""
     latitude: float = 0.0
     longitude: float = 0.0

@@ -19,14 +19,22 @@ the collector before the lot is priced.
 
 # device -> (primary material, [alternatives], needs_disambiguation)
 DEVICE_TO_MATERIAL = {
+    "Air-Conditioner": ("Motor & magnet-bearing", ["Mixed plastic"], False),
     "Battery": ("Battery", [], False),
-    "PCB": ("PCB", ["Motor & magnet-bearing"], False),
-    "Mobile": ("PCB", ["Battery", "LCD/LED panel"], False),
+    "heat-sink": ("Motor & magnet-bearing", ["PCB"], False),
     "Keyboard": ("Mixed plastic", ["PCB"], False),
-    "Mouse": ("Mixed plastic", ["PCB"], False),
-    "Printer": ("Mixed plastic", ["PCB", "Motor & magnet-bearing"], False),
-    "Player": ("PCB", ["Mixed plastic", "Motor & magnet-bearing"], False),
+    "Laptop": ("PCB", ["Battery", "LCD/LED panel"], False),
+    "light bulbs": ("Other", ["CRT"], False),
+    "Microchip-IC": ("PCB", [], False),
     "Microwave": ("Motor & magnet-bearing", ["PCB", "Mixed plastic"], False),
+    "Mobile": ("PCB", ["Battery", "LCD/LED panel"], False),
+    "Mouse": ("Mixed plastic", ["PCB"], False),
+    "Passive-Component": ("PCB", [], False),
+    "PCB": ("PCB", ["Motor & magnet-bearing"], False),
+    "Printer": ("Mixed plastic", ["PCB", "Motor & magnet-bearing"], False),
+    "Refrigerator": ("Motor & magnet-bearing", ["Mixed plastic"], False),
+    "Resistor": ("PCB", [], False),
+    "transistor": ("PCB", [], False),
     "Washing Machine": ("Motor & magnet-bearing", ["Mixed plastic", "PCB"], False),
     # Genuinely ambiguous from a photograph — ask the collector.
     "Television": ("CRT", ["LCD/LED panel"], True),
@@ -49,7 +57,7 @@ DISAMBIGUATION = {
 }
 
 # Categories that photo classification can never propose from this dataset.
-NOT_COVERED_BY_IMAGE_DATASET = ["Cable", "Mixed plastic"]
+NOT_COVERED_BY_IMAGE_DATASET = ["Cable"]
 
 
 def map_device(device: str) -> dict:

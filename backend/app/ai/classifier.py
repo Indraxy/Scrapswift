@@ -54,7 +54,7 @@ NOT_EWASTE_MESSAGE = (
 )
 
 MODEL_VERSION = "heuristic-demo-v2"
-IMAGE_MODEL_VERSION = "ewaste-image-hog-svc-v1"
+IMAGE_MODEL_VERSION = "ewaste-image-18class-v1"
 
 # Below this the suggestion is not worth showing as an answer; the UI asks the
 # collector to pick the material instead.
@@ -80,6 +80,10 @@ class Prediction:
     device_mapping: dict = field(default_factory=dict)
     model_version: str = MODEL_VERSION
     note: str = PROTOTYPE_NOTE
+    fingerprint: str = ""
+    is_duplicate: bool = False
+    duplicate_of_lot: str | None = None
+    similarity_pct: float = 0.0
 
 
 class BaseClassifier:
@@ -422,9 +426,9 @@ class ImageDatasetClassifier(BaseClassifier):
             verdict="E_WASTE", is_ewaste=True, reason="",
             alternatives=alternatives, features=f, model_version=self.version,
             device=device, device_mapping=mapping,
-            note=("Trained on the supplied e-waste image dataset (10 device classes, "
-                  "65.3% test accuracy). The model identifies the DEVICE; the material "
-                  "shown is a mapping you should confirm."),
+            note=("Trained on the 18-class e-waste image dataset. "
+                  "The model identifies the device/component; confirm or correct "
+                  "the suggested material before lot creation."),
         )
 
 

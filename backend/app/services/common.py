@@ -77,6 +77,7 @@ def lot_dict(db: Session, lot: Lot) -> dict:
         "material_category": lot.material_category,
         "description": lot.description,
         "photo": lot.photo,
+        "image_fingerprint": getattr(lot, "image_fingerprint", ""),
         "weight": lot.weight,
         "condition": lot.condition,
         "source_type": lot.source_type,

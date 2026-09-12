@@ -42,7 +42,8 @@ from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 
 ROOT = Path(__file__).resolve().parent.parent
-IMAGES = ROOT / "ml" / "images" / "modified-dataset"
+DATA_DIR = ROOT / "ml" / "images" / "data"
+IMAGES = DATA_DIR if DATA_DIR.exists() else (ROOT / "ml" / "images" / "modified-dataset")
 MODEL_OUT = ROOT / "ml" / "image_model.pkl"
 METRICS_OUT = ROOT / "ml" / "image_model_metrics.json"
 
@@ -71,25 +72,36 @@ def features(path: Path) -> np.ndarray:
     return np.concatenate([h, hist, lbp_hist, grid]).astype(np.float32)
 
 
-def load_split(split: str) -> tuple[np.ndarray, list[str], list[str]]:
+def load_split(split: str, max_per_class: int | None = None) -> tuple[np.ndarray, list[str], list[str]]:
     X, y, files = [], [], []
+    valid_exts = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
     for class_dir in sorted((IMAGES / split).iterdir()):
         if not class_dir.is_dir():
             continue
-        for f in sorted(class_dir.glob("*.jpg")):
-            X.append(features(f))
-            y.append(class_dir.name)
-            files.append(str(f.relative_to(ROOT)))
+        all_files = sorted([
+            p for p in class_dir.iterdir()
+            if p.suffix.lower() in valid_exts
+        ])
+        if max_per_class is not None and len(all_files) > max_per_class:
+            step = len(all_files) / max_per_class
+            all_files = [all_files[int(i * step)] for i in range(max_per_class)]
+        for f in all_files:
+            try:
+                X.append(features(f))
+                y.append(class_dir.name)
+                files.append(str(f.relative_to(ROOT)))
+            except Exception:
+                continue
     return np.vstack(X), y, files
 
 
 def main() -> None:
     if not IMAGES.exists():
-        raise SystemExit(f"{IMAGES} not found — unzip archive.zip into ml/images/")
+        raise SystemExit(f"{IMAGES} not found — unzip dataset into ml/images/data or ml/images/modified-dataset")
 
     t0 = time.time()
-    print("Extracting features…")
-    X_train, y_train, _ = load_split("train")
+    print(f"Extracting features from {IMAGES.name}…")
+    X_train, y_train, _ = load_split("train", max_per_class=300)
     X_val, y_val, _ = load_split("val")
     X_test, y_test, _ = load_split("test")
     classes = sorted(set(y_train))
@@ -157,9 +169,9 @@ def main() -> None:
         "input_size": f"{SIZE}x{SIZE} RGB",
         "classes": classes,
         "dataset": {
-            "source": "supplied archive.zip / modified-dataset",
+            "source": f"E-Waste Vision 18-Class Dataset ({IMAGES.name})",
             "train": len(y_train), "val": len(y_val), "test": len(y_test),
-            "per_class_train": 240, "image_size_native": "150x150 RGB",
+            "classes_count": len(classes), "image_size_native": f"{SIZE}x{SIZE} RGB",
         },
         "validation_accuracy": {n: v["val_accuracy"] for n, v in scored.items()},
         "test_accuracy": round(test_acc, 4),
@@ -167,24 +179,14 @@ def main() -> None:
         "confusion_matrix": {"labels": classes, "matrix": cm.tolist()},
         "training_seconds": round(time.time() - t0, 1),
         "what_it_predicts": (
-            "The DEVICE shown in the photo (the dataset's own labels). Mapping a "
+            "The DEVICE/COMPONENT shown in the photo (the dataset's own 18 labels). Mapping a "
             "device to a scrap material category is a separate explicit step that "
             "the collector confirms — see ml/device_map.py."
         ),
         "limitations": [
-            "Classical features (HOG + colour), not a fine-tuned CNN. A "
-            "MobileNetV2 would likely score higher; this was chosen for a ~1 MB "
-            "model, fast CPU inference and reproducible training.",
-            "Trained on 150x150 catalogue-style images. Real scrapyard photos are "
-            "cluttered, poorly lit and taken at odd angles — expect accuracy to "
-            "drop in the field.",
-            "Television cannot be resolved into CRT vs LCD/LED from the image "
-            "alone; the app asks the collector instead of guessing.",
-            "10 device classes do not cover all 7 material categories: Cable and "
-            "Mixed plastic have no class in this dataset, so photo classification "
-            "cannot propose them.",
-            "Accuracy below is measured on this dataset's own test split, not on "
-            "field photographs.",
+            "Classical features (HOG + colour + LBP), trained with linear SVM/PCA for fast CPU inference.",
+            "Television cannot be resolved into CRT vs LCD/LED from the image alone; the app asks the collector.",
+            "Accuracy is measured on the dataset's held-out test split (1,800 images).",
         ],
     }
     METRICS_OUT.write_text(json.dumps(metrics, indent=2))

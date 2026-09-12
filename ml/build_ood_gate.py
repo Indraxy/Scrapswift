@@ -48,7 +48,7 @@ def main() -> None:
     bundle = joblib.load(MODEL)
     pipe = bundle["pipeline"]
 
-    X_train, _, _ = load_split("train")
+    X_train, _, _ = load_split("train", max_per_class=300)
     X_val, _, _ = load_split("val")
     X_test, _, _ = load_split("test")
 
@@ -76,9 +76,18 @@ def main() -> None:
     sys.path.insert(0, str(ROOT / "backend"))
     from app.ai.features import extract as extract_basic
 
-    train_files = sorted((IMAGES / "train").glob("*/*.jpg"))
-    edges = np.array([extract_basic(f.read_bytes())["edge_density"]
-                      for f in train_files])
+    valid_exts = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
+    train_files = [f for f in (IMAGES / "train").glob("*/*") if f.suffix.lower() in valid_exts]
+    if len(train_files) > 1500:
+        step = len(train_files) / 1500
+        train_files = [train_files[int(i * step)] for i in range(1500)]
+    edges = []
+    for f in train_files:
+        try:
+            edges.append(extract_basic(f.read_bytes())["edge_density"])
+        except Exception:
+            continue
+    edges = np.array(edges)
     structure_floor = float(np.percentile(edges, STRUCTURE_PERCENTILE))
     print(f"training edge density: median {np.median(edges):.4f}, "
           f"p{STRUCTURE_PERCENTILE:.0f} {structure_floor:.4f}")
