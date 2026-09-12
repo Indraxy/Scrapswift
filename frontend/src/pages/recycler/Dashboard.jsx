@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ScanLine } from 'lucide-react'
+import { MessageSquare, ScanLine } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import { offers as offersApi, recycler } from '../../services/api'
 import { Loading, Notice, Stat, StatusChip, formatDate, rupee } from '../../components/ui'
+import ChatDrawer from '../../components/ChatDrawer'
 
 export default function RecyclerDashboard() {
   const { t, tMaterial } = useI18n()
@@ -13,6 +14,8 @@ export default function RecyclerDashboard() {
   const [open, setOpen] = useState([])
   const [draft, setDraft] = useState({})
   const [sent, setSent] = useState('')
+  const [chatTarget, setChatTarget] = useState(null)
+
 
   useEffect(() => {
     const load = () => {
@@ -115,10 +118,31 @@ export default function RecyclerDashboard() {
                     />
                   </td>
                   <td className="px-3 py-2">
-                    <button className="btn-primary px-3 py-1.5 text-xs" disabled={busy === lot.lot_id}
-                            onClick={() => sendOffer(lot)}>
-                      {lot.my_offer ? t('reviseOffer') : t('makeOffer')}
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <button className="btn-primary px-3 py-1.5 text-xs" disabled={busy === lot.lot_id}
+                              onClick={() => sendOffer(lot)}>
+                        {lot.my_offer ? t('reviseOffer') : t('makeOffer')}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-ghost flex items-center gap-1 px-2.5 py-1.5 text-xs"
+                        onClick={() =>
+                          setChatTarget({
+                            recipient: {
+                              id: lot.collector_user_id || lot.collector_id,
+                              name: lot.collector_name || `Collector #${lot.collector_id}`,
+                              role: 'collector',
+                              location: lot.location,
+                            },
+                            lot,
+                          })
+                        }
+                        title={t('chatWithCollector')}
+                      >
+                        <MessageSquare size={14} />
+                        <span>{t('chat')}</span>
+                      </button>
+                    </div>
                     {sent === lot.lot_id && (
                       <span className="ml-2 text-xs font-semibold text-board">{t('offerSent')}</span>
                     )}
@@ -154,10 +178,28 @@ export default function RecyclerDashboard() {
                   <td className="px-3 py-2">{lot.location}</td>
                   <td className="px-3 py-2"><StatusChip status={lot.status} /></td>
                   <td className="px-3 py-2">
-                    <div className="flex gap-1.5">
+                    <div className="flex items-center gap-1.5">
                       <Link className="btn-primary px-3 py-1.5 text-xs" to={`/verify/${lot.lot_id}`}>
                         {t('verifyLot')}
                       </Link>
+                      <button
+                        type="button"
+                        className="btn-ghost flex items-center gap-1 px-2.5 py-1.5 text-xs"
+                        onClick={() =>
+                          setChatTarget({
+                            recipient: {
+                              id: lot.collector_user_id || lot.collector_id,
+                              name: lot.collector_name || `Collector #${lot.collector_id}`,
+                              role: 'collector',
+                              location: lot.location,
+                            },
+                            lot,
+                          })
+                        }
+                        title={t('chatWithCollector')}
+                      >
+                        <MessageSquare size={14} />
+                      </button>
                       {lot.status === 'HANDOVER_PENDING' && (
                         <>
                           <button className="btn-ghost px-2 py-1.5 text-xs" disabled={busy === lot.lot_id}
@@ -178,6 +220,16 @@ export default function RecyclerDashboard() {
           </table>
         </div>
       </section>
+
+      {chatTarget && (
+        <ChatDrawer
+          isOpen={Boolean(chatTarget)}
+          onClose={() => setChatTarget(null)}
+          recipient={chatTarget.recipient}
+          lot={chatTarget.lot}
+        />
+      )}
+
 
       <section>
         <h2 className="eyebrow mb-2">{t('transactions')}</h2>

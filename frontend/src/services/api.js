@@ -550,3 +550,27 @@ export const admin = {
   trace: (lotId) =>
     call(() => http(`/api/admin/trace/${lotId}`), () => demo.trace(lotId), () => sbDb.trace(lotId)),
 }
+
+export const chat = {
+  threads: () =>
+    call(() => http('/api/chat/threads'), () => demo.getChatThreads(), () => []),
+  messages: (withUserId, lotId = null) =>
+    call(
+      () => http(`/api/chat/messages?with_user_id=${withUserId}${lotId ? `&lot_id=${encodeURIComponent(lotId)}` : ''}`),
+      () => demo.getChatMessages(withUserId, lotId),
+      () => []
+    ),
+  send: ({ lotId = null, receiverId, content, messageType = 'text' }) =>
+    call(
+      () => http('/api/chat/messages', { method: 'POST', body: { lot_id: lotId, receiver_id: receiverId, content, message_type: messageType } }),
+      () => demo.sendChatMessage({ lotId, receiverId, content, messageType }),
+      () => null
+    ),
+  markRead: (withUserId, lotId = null) =>
+    call(
+      () => http('/api/chat/read', { method: 'POST', body: { with_user_id: withUserId, lot_id: lotId } }),
+      () => demo.markChatRead(withUserId, lotId),
+      () => null
+    ),
+}
+

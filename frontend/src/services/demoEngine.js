@@ -79,9 +79,11 @@ export const db = {
   transactions: [],
   handovers: [],
   payments: [],
+  chatMessages: [],
   session: null,
   lotSeq: 0,
   handoverSeq: 0,
+  chatSeq: 0,
 }
 
 export function haversineKm(lat1, lon1, lat2, lon2) {
@@ -1138,6 +1140,195 @@ export function acceptOffer(offerId) {
     accepted_offer: decorateOffer(offer) }
 }
 
-export function ensureSeeded() { seed() }
+/* ---------------------------------------------------------------- chat methods */
+function seedChatMessages() {
+  if (db.chatMessages.length) return
+  const colUser = db.users.find((u) => u.email === 'collector@demo.com')
+  const recUser = db.users.find((u) => u.email === 'recycler@demo.com')
+  if (!colUser || !recUser) return
+
+  const sampleLot = db.lots.find((l) => l.collector_id === 1)
+  const lotId = sampleLot?.lot_id || 'LOT-2026-00001'
+  const tBase = now() - 3600000 * 4
+
+  db.chatMessages.push(
+    {
+      message_id: 1,
+      lot_id: lotId,
+      sender_id: colUser.id,
+      sender_name: colUser.name,
+      sender_role: colUser.role,
+      receiver_id: recUser.id,
+      receiver_name: recUser.name,
+      content: 'Namaste, can you provide doorstep pickup for this PCB lot in Salt Lake?',
+      message_type: 'pickup_query',
+      is_read: true,
+      created_at: new Date(tBase).toISOString(),
+    },
+    {
+      message_id: 2,
+      lot_id: lotId,
+      sender_id: recUser.id,
+      sender_name: recUser.name,
+      sender_role: recUser.role,
+      receiver_id: colUser.id,
+      receiver_name: colUser.name,
+      content: 'Yes! Our collection vehicle visits Salt Lake every Tuesday and Friday. We can pick it up tomorrow morning.',
+      message_type: 'text',
+      is_read: true,
+      created_at: new Date(tBase + 1800000).toISOString(),
+    },
+    {
+      message_id: 3,
+      lot_id: lotId,
+      sender_id: colUser.id,
+      sender_name: colUser.name,
+      sender_role: colUser.role,
+      receiver_id: recUser.id,
+      receiver_name: recUser.name,
+      content: 'Great, what is the exact rate per kg if boards are unsorted?',
+      message_type: 'price_query',
+      is_read: true,
+      created_at: new Date(tBase + 3600000).toISOString(),
+    },
+    {
+      message_id: 4,
+      lot_id: lotId,
+      sender_id: recUser.id,
+      sender_name: recUser.name,
+      sender_role: recUser.role,
+      receiver_id: colUser.id,
+      receiver_name: colUser.name,
+      content: 'For unsorted motherboards and RAM, we offer ₹195/kg with instant digital handover confirmation.',
+      message_type: 'text',
+      is_read: false,
+      created_at: new Date(tBase + 5400000).toISOString(),
+    }
+  )
+  db.chatSeq = 4
+}
+
+export function getChatThreads() {
+  seed()
+  seedChatMessages()
+  const current = db.session
+  if (!current) return []
+
+  const userMessages = db.chatMessages.filter(
+    (m) => m.sender_id === current.id || m.receiver_id === current.id
+  )
+
+  const threadsMap = {}
+  userMessages.forEach((msg) => {
+    const otherUserId = msg.sender_id === current.id ? msg.receiver_id : msg.sender_id
+    const threadKey = `${otherUserId}_${msg.lot_id || 'general'}`
+    if (!threadsMap[threadKey]) {
+      threadsMap[threadKey] = {
+        latest: msg,
+        otherUserId,
+        lotId: msg.lot_id,
+        unreadCount: 0,
+      }
+    }
+    if (msg.receiver_id === current.id && !msg.is_read) {
+      threadsMap[threadKey].unreadCount += 1
+    }
+  })
+
+  return Object.values(threadsMap).map(({ latest, otherUserId, lotId, unreadCount }) => {
+    const otherUser = db.users.find((u) => u.id === otherUserId) || {
+      id: otherUserId,
+      name: `User ${otherUserId}`,
+      role: 'user',
+    }
+    let contact = ''
+    if (otherUser.role === 'recycler') {
+      const rec = db.recyclers.find((r) => r.user_id === otherUser.id)
+      contact = rec ? rec.contact || rec.location : ''
+    } else if (otherUser.role === 'collector') {
+      const col = db.collectors.find((c) => c.user_id === otherUser.id)
+      contact = col ? col.operating_location : ''
+    }
+
+    const lot = lotId ? db.lots.find((l) => l.lot_id === lotId) : null
+
+    return {
+      thread_id: `${otherUserId}_${lotId || 'general'}`,
+      lot_id: lotId,
+      other_user_id: otherUserId,
+      other_user_name: otherUser.name,
+      other_user_role: otherUser.role,
+      other_user_contact: contact,
+      lot_category: lot?.material_category || '',
+      lot_weight: lot?.weight || null,
+      last_message: latest.content,
+      last_message_at: latest.created_at,
+      unread_count: unreadCount,
+    }
+  }).sort((a, b) => new Date(b.last_message_at) - new Date(a.last_message_at))
+}
+
+export function getChatMessages(withUserId, lotId = null) {
+  seed()
+  seedChatMessages()
+  const current = db.session
+  if (!current) return []
+  const uid = Number(withUserId)
+
+  return db.chatMessages
+    .filter(
+      (m) =>
+        ((m.sender_id === current.id && m.receiver_id === uid) ||
+         (m.sender_id === uid && m.receiver_id === current.id)) &&
+        (!lotId || m.lot_id === lotId)
+    )
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+}
+
+export function sendChatMessage({ lotId = null, receiverId, content, messageType = 'text' }) {
+  seed()
+  seedChatMessages()
+  const current = db.session
+  if (!current) throw new Error('Not logged in')
+  const rId = Number(receiverId)
+  const receiver = db.users.find((u) => u.id === rId)
+  if (!receiver) throw new Error('Receiver not found')
+
+  db.chatSeq += 1
+  const newMsg = {
+    message_id: db.chatSeq,
+    lot_id: lotId || null,
+    sender_id: current.id,
+    sender_name: current.name,
+    sender_role: current.role,
+    receiver_id: rId,
+    receiver_name: receiver.name,
+    content: content.trim(),
+    message_type: messageType,
+    is_read: false,
+    created_at: new Date().toISOString(),
+  }
+  db.chatMessages.push(newMsg)
+  return newMsg
+}
+
+export function markChatRead(withUserId, lotId = null) {
+  seed()
+  const current = db.session
+  if (!current) return { marked_read: 0 }
+  const uid = Number(withUserId)
+
+  let count = 0
+  db.chatMessages.forEach((m) => {
+    if (m.receiver_id === current.id && m.sender_id === uid && (!lotId || m.lot_id === lotId) && !m.is_read) {
+      m.is_read = true
+      count += 1
+    }
+  })
+  return { marked_read: count }
+}
+
+export function ensureSeeded() { seed(); seedChatMessages() }
 export function setSession(user) { db.session = user }
+
 

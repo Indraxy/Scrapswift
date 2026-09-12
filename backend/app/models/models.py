@@ -264,3 +264,17 @@ class Payment(Base):
     mode: Mapped[str] = mapped_column(String(10), default="cash")
     status: Mapped[str] = mapped_column(String(20), default="PAID")
     timestamp: Mapped[datetime] = mapped_column(DateTime, default=_now)
+
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+
+    message_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    lot_id: Mapped[str | None] = mapped_column(ForeignKey("lots.lot_id"), nullable=True, index=True)
+    sender_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    receiver_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    content: Mapped[str] = mapped_column(Text)
+    message_type: Mapped[str] = mapped_column(String(30), default="text")
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_now, index=True)
+

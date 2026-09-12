@@ -1,4 +1,5 @@
 from .models import (  # noqa: F401
+    ChatMessage,
     Collector,
     Handover,
     Lot,
@@ -11,3 +12,4 @@ from .models import (  # noqa: F401
     Transaction,
     User,
 )
+

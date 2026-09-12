@@ -261,3 +261,39 @@ class RecyclerProfileIn(BaseModel):
 
 class SyncLotsIn(BaseModel):
     lots: list[LotCreateIn]
+
+
+class ChatMessageIn(BaseModel):
+    lot_id: str | None = None
+    receiver_id: int
+    content: str = Field(min_length=1, max_length=1000)
+    message_type: str = "text"  # text | quick_action | price_query | pickup_query
+
+
+class ChatMessageOut(BaseModel):
+    message_id: int
+    lot_id: str | None = None
+    sender_id: int
+    sender_name: str
+    sender_role: str
+    receiver_id: int
+    receiver_name: str
+    content: str
+    message_type: str
+    is_read: bool
+    created_at: datetime
+
+
+class ChatThreadOut(BaseModel):
+    thread_id: str
+    lot_id: str | None = None
+    other_user_id: int
+    other_user_name: str
+    other_user_role: str
+    other_user_contact: str = ""
+    lot_category: str = ""
+    lot_weight: float | None = None
+    last_message: str = ""
+    last_message_at: datetime | None = None
+    unread_count: int = 0
+

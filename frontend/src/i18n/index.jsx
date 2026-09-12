@@ -362,6 +362,25 @@ const en = {
   traceIntro: 'Every lot is one chain of records: collector → lot → price → recycler → handover → payment.',
   noLotsWaiting: 'No lots waiting.',
   figuresNote: 'All figures come from the seeded prototype dataset and update as the demo is used.',
+
+  // chat & communication
+  chat: 'Chat',
+  chatWithRecycler: 'Chat with Recycler',
+  chatWithCollector: 'Chat with Collector',
+  messages: 'Messages',
+  noMessagesYet: 'No messages yet. Send a message to start the conversation.',
+  typeMessage: 'Type a message…',
+  send: 'Send',
+  quickReplies: 'Quick Questions',
+  quickPickup: 'Can you provide doorstep pickup?',
+  quickBestRate: 'What is your best rate per kg?',
+  quickDropoff: 'Can I drop this lot off tomorrow?',
+  quickPhoto: 'Please share clear photos of components',
+  quickAccepted: 'I accept your rate. When can we meet?',
+  audioPlay: 'Listen',
+  unread: 'unread',
+  chatNegotiation: 'Price & Handover Discussion',
+  forLot: 'For Lot',
 }
 
 const hi = {
@@ -706,6 +725,25 @@ const hi = {
   open: 'खोलें',
   cameraBlocked: 'यहाँ कैमरा उपलब्ध नहीं — लॉट नंबर टाइप करें।',
   notFound: 'इस नंबर का कोई लॉट नहीं मिला।',
+
+  // chat & communication
+  chat: 'चैट',
+  chatWithRecycler: 'रीसाइक्लर से बात करें',
+  chatWithCollector: 'कबाड़ीवाले से बात करें',
+  messages: 'संदेश',
+  noMessagesYet: 'अभी कोई संदेश नहीं है। बात शुरू करने के लिए संदेश भेजें।',
+  typeMessage: 'संदेश लिखें…',
+  send: 'भेजें',
+  quickReplies: 'जल्दी पूछें',
+  quickPickup: 'क्या आप घर से पिकअप कर सकते हैं?',
+  quickBestRate: 'प्रति किलो आपका सबसे अच्छा भाव क्या है?',
+  quickDropoff: 'क्या मैं कल सामान ला सकता हूँ?',
+  quickPhoto: 'कृपया सामान की साफ़ फोटो भेजें',
+  quickAccepted: 'मुझे यह भाव मंजूर है। कब मिल सकते हैं?',
+  audioPlay: 'सुनें',
+  unread: 'अपठित',
+  chatNegotiation: 'भाव और हैंडओवर की बातचीत',
+  forLot: 'लॉट के लिए',
 }
 
 const bn = {
@@ -1050,6 +1088,25 @@ const bn = {
   open: 'খুলুন',
   cameraBlocked: 'এখানে ক্যামেরা উপলব্ধ নয় — লট নম্বর টাইপ করুন।',
   notFound: 'এই নম্বরের কোনও লট পাওয়া যায়নি।',
+
+  // chat & communication
+  chat: 'চ্যাট',
+  chatWithRecycler: 'রিসাইক্লারের সাথে কথা বলুন',
+  chatWithCollector: 'সংগ্রাহকের সাথে কথা বলুন',
+  messages: 'বার্তা',
+  noMessagesYet: 'এখনও কোনো বার্তা নেই। কথা শুরু করতে বার্তা পাঠান।',
+  typeMessage: 'বার্তা লিখুন…',
+  send: 'পাঠান',
+  quickReplies: 'দ্রুত প্রশ্ন',
+  quickPickup: 'আপনি কি বাড়ি থেকে পিকআপ করতে পারবেন?',
+  quickBestRate: 'প্রতি কেজি আপনার সেরা দর কত?',
+  quickDropoff: 'আমি কি কাল লটটি নিয়ে আসতে পারি?',
+  quickPhoto: 'দয়া করে সামগ্রীর স্পষ্ট ছবি পাঠান',
+  quickAccepted: 'আমার এই দর পছন্দ হয়েছে। কখন দেখা করতে পারি?',
+  audioPlay: 'শুনুন',
+  unread: 'নতুন বার্তা',
+  chatNegotiation: 'দরদাম ও হ্যান্ডওভার আলোচনা',
+  forLot: 'লটের জন্য',
 }
 
 // Material names are shown to low-literacy users, so they are translated too.

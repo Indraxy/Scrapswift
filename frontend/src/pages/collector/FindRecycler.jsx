@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BadgeCheck, MapPin, Star, Truck } from 'lucide-react'
+import { BadgeCheck, MapPin, MessageSquare, Star, Truck } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import { lots as lotsApi } from '../../services/api'
 import MapView from '../../components/MapView'
 import { Loading, Notice, rupee } from '../../components/ui'
+import ChatDrawer from '../../components/ChatDrawer'
 
 export default function FindRecycler() {
   const { lotId } = useParams()
@@ -15,6 +16,8 @@ export default function FindRecycler() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [openScore, setOpenScore] = useState(null)
+  const [chatTarget, setChatTarget] = useState(null)
+
 
   useEffect(() => {
     Promise.all([lotsApi.get(lotId), lotsApi.matches(lotId)])
@@ -88,10 +91,31 @@ export default function FindRecycler() {
             <span className="chip bg-brass"><BadgeCheck size={12} /> {t('authorised')}</span>
           </div>
 
-          <button className="btn-primary mt-4 w-full text-lg" disabled={busy}
-                  onClick={() => choose(best.recycler_id)}>
-            {t('chooseThis')}
-          </button>
+          <div className="mt-4 flex items-center gap-2">
+            <button className="btn-primary flex-1 text-lg" disabled={busy}
+                    onClick={() => choose(best.recycler_id)}>
+              {t('chooseThis')}
+            </button>
+            <button
+              type="button"
+              className="btn-ghost flex items-center gap-1.5 px-3.5 py-3 text-sm"
+              onClick={() =>
+                setChatTarget({
+                  recipient: {
+                    id: best.user_id || best.recycler_id,
+                    name: best.name,
+                    role: 'recycler',
+                    location: best.location,
+                  },
+                  lot,
+                })
+              }
+              title={t('chatWithRecycler')}
+            >
+              <MessageSquare size={18} />
+              <span>{t('chat')}</span>
+            </button>
+          </div>
           <ScoreBreakdown item={best} open={openScore === best.recycler_id}
                           onToggle={() => setOpenScore(openScore === best.recycler_id ? null : best.recycler_id)} />
         </div>
@@ -136,10 +160,29 @@ export default function FindRecycler() {
                 <span>{m.pickup_available ? '🚚' : '—'}</span>
                 <span className="num ml-auto font-bold text-ink">{rupee(m.offer_value)}</span>
               </div>
-              <div className="mt-2 flex gap-2">
+              <div className="mt-2 flex items-center gap-2">
                 <button className="btn-ghost flex-1 justify-center py-2" disabled={busy}
                         onClick={() => choose(m.recycler_id)}>
                   {t('chooseThis')}
+                </button>
+                <button
+                  type="button"
+                  className="btn-ghost flex items-center gap-1 px-2.5 py-2 text-xs"
+                  onClick={() =>
+                    setChatTarget({
+                      recipient: {
+                        id: m.user_id || m.recycler_id,
+                        name: m.name,
+                        role: 'recycler',
+                        location: m.location,
+                      },
+                      lot,
+                    })
+                  }
+                  title={t('chatWithRecycler')}
+                >
+                  <MessageSquare size={14} />
+                  <span>{t('chat')}</span>
                 </button>
                 <button className="btn-ghost px-3 py-2"
                         onClick={() => setOpenScore(openScore === m.recycler_id ? null : m.recycler_id)}>
@@ -152,8 +195,18 @@ export default function FindRecycler() {
         </div>
       </div>
 
+      {chatTarget && (
+        <ChatDrawer
+          isOpen={Boolean(chatTarget)}
+          onClose={() => setChatTarget(null)}
+          recipient={chatTarget.recipient}
+          lot={chatTarget.lot}
+        />
+      )}
+
       <p className="pb-2 text-center text-[11px] text-slate2">{t('onlyAuthorised')}</p>
     </div>
+
   )
 }
 
