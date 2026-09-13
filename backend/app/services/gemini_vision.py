@@ -84,9 +84,10 @@ def compare_handover_images(
         f"- Image 1: Uploaded by the scrap collector when creating the lot (declared category: '{material_category}').\n"
         f"- Image 2: Uploaded by the authorised recycler during physical handover/weighing on the scales.\n\n"
         f"CRITICAL INSTRUCTIONS:\n"
-        f"1. Natural variations in camera angle, rotation, perspective, lighting, zoom, and background (e.g. on a weighing scale vs floor) are EXPECTED and NORMAL.\n"
-        f"2. If Image 2 shows the SAME physical scrap item/device or genuine material matching Image 1, mark as MATCH (is_match: true, anomaly_detected: false).\n"
-        f"3. If Image 2 shows a COMPLETELY DIFFERENT item, a different electronic appliance/component, or a clear fraudulent substitution (e.g. collector declared battery/motherboard, but recycler received a motor, casing, or non-matching item), mark as ANOMALY (is_match: false, anomaly_detected: true).\n\n"
+        f"1. Natural variations in camera angle, rotation, perspective, lighting, zoom, distance, and background (e.g. on a weighing scale vs floor) are EXPECTED and NORMAL.\n"
+        f"2. IMPORTANT: Be EXTREMELY LENIENT. If the materials are plausibly the same category or roughly look like the same type of scrap, give the user the benefit of the doubt and mark as MATCH.\n"
+        f"3. If Image 2 shows the SAME physical scrap item/device or genuine material matching Image 1, mark as MATCH (is_match: true, anomaly_detected: false).\n"
+        f"4. ONLY mark as ANOMALY if there is a BLATANT, UNDENIABLE FRAUDULENT SUBSTITUTION (e.g. Image 1 is a battery, Image 2 is a plastic bottle). If you are unsure, mark it as MATCH.\n\n"
         f"Return strict JSON with this schema:\n"
         f'{{\n'
         f'  "is_match": boolean,\n'

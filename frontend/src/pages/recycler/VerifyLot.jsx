@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BadgeCheck, Banknote, Camera, Smartphone } from 'lucide-react'
+import { BadgeCheck, Banknote, Camera, Smartphone, Image } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import { api, recycler } from '../../services/api'
 import { useCurrentUser } from '../../hooks/useCurrentUser'
 import { Loading, Notice, StatusChip, Timeline, formatDate, rupee } from '../../components/ui'
-import { fileToDataUrl } from '../../utils/camera'
+import CameraCapture from '../../components/CameraCapture'
+import { fileToDataUrl, preferredCameraMode } from '../../utils/camera'
 
 export default function VerifyLot() {
   const { lotId } = useParams()
@@ -19,8 +20,19 @@ export default function VerifyLot() {
   const [busy, setBusy] = useState(false)
   const [handover, setHandover] = useState(null)
   const [scalePhoto, setScalePhoto] = useState('')
+  const [attemptCount, setAttemptCount] = useState(1)
+  const [cameraOpen, setCameraOpen] = useState(false)
   const scaleRef = useRef(null)
+  const galleryRef = useRef(null)
   const currentUser = useCurrentUser()
+
+  function handleCameraClick() {
+    if (preferredCameraMode() === 'live') {
+      setCameraOpen(true)
+    } else {
+      scaleRef.current?.click()
+    }
+  }
 
   useEffect(() => {
     if (!currentUser) { navigate('/login'); return }
@@ -47,7 +59,20 @@ export default function VerifyLot() {
         final_weight: Number(finalWeight),
         final_price: Number(finalPrice),
         scale_photo: scalePhoto,
+        attempt: attemptCount,
       })
+      if (result.status === 'RETRY_REQUESTED') {
+        setAttemptCount(attemptCount + 1)
+        setError(`Anomaly detected: ${result.reason}. Please retake the photo and try again.`)
+        setScalePhoto('')
+        setBusy(false)
+        return
+      }
+      if (result.status === 'VERIFICATION_FAILED') {
+        setData(await recycler.verify(lotId))
+        setBusy(false)
+        return
+      }
       setHandover(result)
       setData(await recycler.verify(lotId))
     } catch (e) {
@@ -75,6 +100,7 @@ export default function VerifyLot() {
   const { lot, transaction, payment } = data
   const handedOver = transaction?.transaction_status === 'HANDED_OVER' || transaction?.transaction_status === 'COMPLETED'
   const isPaid = transaction?.payment_status === 'PAID'
+  const isFailed = transaction?.transaction_status === 'VERIFICATION_FAILED'
   const drift = Number(finalWeight) && lot.weight
     ? ((Number(finalWeight) - lot.weight) / lot.weight) * 100
     : 0
@@ -125,7 +151,7 @@ export default function VerifyLot() {
       </div>
 
       <div className="space-y-4">
-        {!handedOver && (
+        {!handedOver && !isFailed && (
           <div className="plate-lg p-4">
             <div className="font-display text-xl">{t('confirmHandover')}</div>
             <label className="eyebrow mt-3 block" htmlFor="fw">{t('enterFinalWeight')}</label>
@@ -144,6 +170,7 @@ export default function VerifyLot() {
             <div className="mt-4 border-2 border-dashed border-ink/40 p-3">
               <div className="eyebrow">{t('scalePhoto')} *</div>
               <p className="mt-1 text-xs text-slate2">{t('scalePhotoHint')}</p>
+              
               <input
                 ref={scaleRef} type="file" accept="image/*" capture="environment"
                 className="hidden" data-testid="scale-input"
@@ -154,19 +181,52 @@ export default function VerifyLot() {
                   try { setScalePhoto(await fileToDataUrl(file)) } catch { /* ignore */ }
                 }}
               />
-              {scalePhoto ? (
+              <input
+                ref={galleryRef} type="file" accept="image/*"
+                className="hidden" data-testid="gallery-input"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0]
+                  e.target.value = ''
+                  if (!file) return
+                  try { setScalePhoto(await fileToDataUrl(file)) } catch { /* ignore */ }
+                }}
+              />
+
+              {cameraOpen ? (
+                <CameraCapture
+                  onCapture={(dataUrl) => { setCameraOpen(false); setScalePhoto(dataUrl) }}
+                  onCancel={() => setCameraOpen(false)}
+                  onUnavailable={() => {
+                    setCameraOpen(false)
+                    scaleRef.current?.click()
+                  }}
+                />
+              ) : scalePhoto ? (
                 <div className="mt-2 flex items-center gap-3">
                   <img src={scalePhoto} alt="" className="h-20 w-20 border-2 border-ink object-cover" />
-                  <button type="button" className="btn-ghost px-3 py-1.5 text-xs"
-                          onClick={() => scaleRef.current?.click()}>
-                    {t('retakePhoto')}
-                  </button>
+                  <div className="flex flex-col gap-2">
+                    <button type="button" className="btn-ghost px-3 py-1.5 text-xs"
+                            onClick={handleCameraClick}>
+                      <Camera size={14} className="mr-1 inline" /> {t('retakePhoto')}
+                    </button>
+                    <button type="button" className="btn-ghost px-3 py-1.5 text-xs"
+                            onClick={() => galleryRef.current?.click()}>
+                      <Image size={14} className="mr-1 inline" /> Gallery
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <button type="button" className="btn-ghost mt-2 w-full justify-center py-2.5"
-                        onClick={() => scaleRef.current?.click()}>
-                  <Camera size={16} /> {t('takePhoto')}
-                </button>
+                <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">
+                  <button type="button" className="btn-ghost justify-center py-2.5"
+                          onClick={handleCameraClick}>
+                    <Camera size={16} /> {t('takePhoto')}
+                  </button>
+                  <button type="button" className="btn-ghost justify-center px-4 py-2.5"
+                          onClick={() => galleryRef.current?.click()}
+                          title="Upload from gallery">
+                    <Image size={16} />
+                  </button>
+                </div>
               )}
             </div>
             {error && <Notice tone="warn">{error}</Notice>}
@@ -178,7 +238,7 @@ export default function VerifyLot() {
           </div>
         )}
 
-        {handedOver && (
+        {handedOver && !isFailed && (
           <div className="border-[3px] border-ink bg-board p-4 text-white shadow-plate">
             <div className="font-display text-xl">✅ HANDOVER VERIFIED</div>
             <dl className="mt-3 space-y-1 text-sm">
@@ -193,7 +253,16 @@ export default function VerifyLot() {
 
         {transaction?.anomaly_flag && <Notice tone="warn">⚠️ {transaction.anomaly_reason}</Notice>}
 
-        {handedOver && !isPaid && (
+        {isFailed && (
+          <div className="plate-lg border-copper/30 bg-copper/10 p-4">
+            <div className="font-display text-xl text-copper">❌ VERIFICATION FAILED</div>
+            <p className="mt-2 text-sm text-copper">
+              Multiple anomalies were detected during verification. The lot has been locked and cannot proceed to payment. Please contact support.
+            </p>
+          </div>
+        )}
+
+        {handedOver && !isPaid && !isFailed && (
           <div className="plate-lg p-4">
             <div className="font-display text-xl">{t('paymentMode')}</div>
             <div className="mt-3 grid grid-cols-2 gap-2">
