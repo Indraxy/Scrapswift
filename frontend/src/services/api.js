@@ -118,7 +118,7 @@ export async function probeBackend() {
   const started = now()
   try {
     const res = await fetch(`${BASE}/api/health`, {
-      signal: AbortSignal.timeout ? AbortSignal.timeout(4000) : undefined,
+      signal: AbortSignal.timeout ? AbortSignal.timeout(10000) : undefined,
     })
     log('GET', '/api/health', res.status, started)
     setConnected(res.ok)
