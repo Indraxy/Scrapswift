@@ -9,8 +9,7 @@ from ..config import settings
 
 logger = logging.getLogger(__name__)
 
-GEMINI_MODEL = "gemini-2.5-flash"
-
+GEMINI_MODEL = "gemini-3.6-flash"
 
 def _extract_image_data(img_input: str | bytes) -> tuple[str, str] | tuple[None, None]:
     """Extract (mime_type, base64_str) from data URL, file path, or raw bytes."""
@@ -136,11 +135,17 @@ def compare_handover_images(
             import time
             time.sleep(1) # wait 1 second before retrying
             
-    logger.warning("Falling back to auto-approve due to repeated API failures.")
+    logger.warning("Falling back to hash comparison due to repeated API failures.")
+    import hashlib
+    col_hash = hashlib.sha256(b64_col.encode("utf-8")).hexdigest()
+    rec_hash = hashlib.sha256(b64_rec.encode("utf-8")).hexdigest()
+    
+    is_match = (col_hash == rec_hash)
+    
     return {
-        "is_match": True,
-        "anomaly_detected": False,
-        "confidence": 0.0,
-        "reason": f"Gemini audit fallback: API failed after 3 attempts.",
-        "audited_by": "fallback",
+        "is_match": is_match,
+        "anomaly_detected": not is_match,
+        "confidence": 1.0 if is_match else 0.0,
+        "reason": f"Gemini API failed. Fallback exact hash match: {is_match}",
+        "audited_by": "fallback_hash",
     }
