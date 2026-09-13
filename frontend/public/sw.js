@@ -3,7 +3,7 @@
 // API GETs: network-first with a cached fallback, so the price board and
 // recycler list stay readable offline. Writes are never cached — they queue
 // in IndexedDB and sync from the app.
-const CACHE = 'kabadiwala-v3'
+const CACHE = 'kabadiwala-v4'
 const SHELL = ['./', './index.html', './manifest.webmanifest']
 
 self.addEventListener('install', (e) => {

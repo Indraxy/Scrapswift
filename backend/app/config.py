@@ -69,6 +69,9 @@ class Settings:
     ]
     TOKEN_TTL_SECONDS = 60 * 60 * 12
     UPLOAD_DIR = BASE_DIR / "uploads"
+    GEMINI_API_KEY = os.environ.get(
+        "GEMINI_API_KEY", ""
+    )
 
 
 

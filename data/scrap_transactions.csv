@@ -1,2 +1,5 @@
 transaction_id,date,material,category,locality,quantity,unit,offered_price,final_price,quality,collector_type,source
 39,2026-08-31T20:12:01,PCB,E-waste,"Malviya Nagar, Jaipur",8.4,kg,1658.0,1638.0,good,informal_collector,kabadiwala-connect-platform
+37,2026-09-13T02:11:40,Battery,E-waste,Salt Lake (Bidhannagar),3.0,kg,303.0,303.0,good,informal_collector,kabadiwala-connect-platform
+40,2026-09-13T04:20:51,PCB,E-waste,Salt Lake (Bidhannagar),5.0,kg,975.0,975.0,good,informal_collector,kabadiwala-connect-platform
+42,2026-09-13T04:26:50,Battery,E-waste,Salt Lake (Bidhannagar),4.0,kg,404.0,404.0,damaged,informal_collector,kabadiwala-connect-platform

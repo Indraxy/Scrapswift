@@ -1,14 +1,33 @@
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+
+from sqlalchemy import text
 
 from .config import settings
 from .database import Base, SessionLocal, engine
 from .models import models  # noqa: F401  (import registers the tables)
 from .routes import admin, aliases, auth, chat, lots, offers, prices, recyclers, scrap, transactions
 
-
 Base.metadata.create_all(bind=engine)
+
+# Auto-migrate: ensure image_fingerprint column exists on lots table across SQLite & PostgreSQL
+try:
+    with engine.connect() as conn:
+        conn.execute(
+            text("ALTER TABLE lots ADD COLUMN IF NOT EXISTS image_fingerprint VARCHAR(64) DEFAULT ''")
+        )
+        conn.commit()
+except Exception:
+    try:
+        with engine.connect() as conn:
+            conn.execute(
+                text("ALTER TABLE lots ADD COLUMN image_fingerprint VARCHAR(64) DEFAULT ''")
+            )
+            conn.commit()
+    except Exception:
+        pass
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -34,12 +53,11 @@ app.include_router(lots.router)
 app.include_router(recyclers.router)
 app.include_router(transactions.router)
 app.include_router(offers.router)
-app.include_router(chat.router)
 app.include_router(admin.router)
 app.include_router(aliases.router)
 app.include_router(scrap.router)
+app.include_router(chat.router)
 app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_DIR), name="uploads")
-
 
 
 @app.get("/api/health")

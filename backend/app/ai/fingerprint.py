@@ -81,15 +81,19 @@ def check_duplicate_lot(
             "distance": 64,
         }
 
-    # Query lots that have a recorded image fingerprint
-    q = db.query(Lot.lot_id, Lot.image_fingerprint).filter(
-        Lot.image_fingerprint != "",
-        Lot.image_fingerprint.isnot(None),
-    )
-    if current_lot_id:
-        q = q.filter(Lot.lot_id != current_lot_id)
-
-    candidates = q.order_by(Lot.id.desc()).limit(300).all()
+    candidates = []
+    try:
+        # Query lots that have a recorded image fingerprint
+        q = db.query(Lot.lot_id, Lot.image_fingerprint).filter(
+            Lot.image_fingerprint != "",
+            Lot.image_fingerprint.isnot(None),
+        )
+        if current_lot_id:
+            q = q.filter(Lot.lot_id != current_lot_id)
+        candidates = q.order_by(Lot.id.desc()).limit(300).all()
+    except Exception:
+        db.rollback()
+        candidates = []
 
     best_match_lot = None
     min_dist = 64
