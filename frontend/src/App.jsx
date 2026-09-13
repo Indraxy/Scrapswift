@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import {
-  BarChart3, Coins, Home as HomeIcon, Map, Package, Recycle,
+  BarChart3, Coins, Home as HomeIcon, Map, MessageSquare, Package, Recycle,
   ScanLine, ShieldCheck, Table2, Wallet,
 } from 'lucide-react'
 import { I18nProvider, useI18n } from './i18n'
@@ -20,6 +20,7 @@ import FindRecycler from './pages/collector/FindRecycler'
 import { LotDetail, MyLots } from './pages/collector/Lots'
 import Earnings from './pages/collector/Earnings'
 import Safety from './pages/collector/Safety'
+import Messages from './pages/Messages'
 import RecyclerDashboard from './pages/recycler/Dashboard'
 import Scan from './pages/recycler/Scan'
 import Rates from './pages/recycler/Rates'
@@ -48,6 +49,7 @@ function CollectorLayout({ children }) {
     '/app/lots': t('myLots'),
     '/app/earnings': t('myEarnings'),
     '/app/safety': t('safety'),
+    '/app/messages': t('messages'),
   }
   return (
     <CollectorShell
@@ -58,7 +60,7 @@ function CollectorLayout({ children }) {
             { to: '/app', end: true, label: t('greeting'), icon: <HomeIcon size={20} /> },
             { to: '/app/new', label: t('sellEwaste'), icon: <Package size={20} /> },
             { to: '/app/prices', label: t('todaysPrices'), icon: <Coins size={20} /> },
-            { to: '/app/recyclers', label: t('findRecycler'), icon: <Recycle size={20} /> },
+            { to: '/app/messages', label: t('messages'), icon: <MessageSquare size={20} /> },
             { to: '/app/earnings', label: t('myEarnings'), icon: <Wallet size={20} /> },
           ]}
         />
@@ -78,6 +80,7 @@ function RecyclerLayout({ children }) {
       subtitle={`${t('recycler')} · ${user?.name ?? ''}`}
       items={[
         { to: '/recycler', end: true, label: t('dashboard'), icon: <BarChart3 size={15} /> },
+        { to: '/recycler/messages', label: t('messages'), icon: <MessageSquare size={15} /> },
         { to: '/recycler/scan', label: t('scanLotQr'), icon: <ScanLine size={15} /> },
         { to: '/recycler/rates', label: t('buyingRates'), icon: <Coins size={15} /> },
       ]}
@@ -143,12 +146,14 @@ export default function App() {
           <Route path="/app/lots" element={<Guard roles={['collector']}><CollectorLayout><MyLots /></CollectorLayout></Guard>} />
           <Route path="/app/lots/:lotId" element={<Guard roles={['collector']}><CollectorLayout><LotDetail /></CollectorLayout></Guard>} />
           <Route path="/app/lots/:lotId/match" element={<Guard roles={['collector']}><CollectorLayout><FindRecycler /></CollectorLayout></Guard>} />
+          <Route path="/app/messages" element={<Guard roles={['collector']}><CollectorLayout><Messages /></CollectorLayout></Guard>} />
           <Route path="/app/earnings" element={<Guard roles={['collector']}><CollectorLayout><Earnings /></CollectorLayout></Guard>} />
           <Route path="/app/safety" element={<Guard roles={['collector']}><CollectorLayout><Safety /></CollectorLayout></Guard>} />
           <Route path="/app/profile" element={<Guard roles={['collector']}><CollectorLayout><Profile /></CollectorLayout></Guard>} />
           <Route path="/app/estimate" element={<Guard roles={['collector']}><CollectorLayout><Estimate /></CollectorLayout></Guard>} />
 
           <Route path="/recycler" element={<Guard roles={['recycler']}><RecyclerLayout><RecyclerDashboard /></RecyclerLayout></Guard>} />
+          <Route path="/recycler/messages" element={<Guard roles={['recycler']}><RecyclerLayout><Messages /></RecyclerLayout></Guard>} />
           <Route path="/recycler/scan" element={<Guard roles={['recycler']}><RecyclerLayout><Scan /></RecyclerLayout></Guard>} />
           <Route path="/recycler/rates" element={<Guard roles={['recycler']}><RecyclerLayout><Rates /></RecyclerLayout></Guard>} />
 
@@ -167,6 +172,7 @@ export default function App() {
     </I18nProvider>
   )
 }
+
 
 function Fallback() {
   const user = useCurrentUser()

@@ -553,18 +553,24 @@ export const admin = {
 
 export const chat = {
   threads: () =>
-    call(() => http('/api/chat/threads'), () => demo.chatThreads?.() ?? []),
-  messages: (lotId) =>
-    call(() => http(`/api/chat/${lotId}/messages`), () => demo.chatMessages?.(lotId) ?? []),
-  send: (lotId, payload) =>
+    call(() => http('/api/chat/threads'), () => demo.getChatThreads(), () => []),
+  messages: (withUserId, lotId = null) =>
     call(
-      () => http(`/api/chat/${lotId}/messages`, { method: 'POST', body: payload }),
-      () => demo.sendChatMessage?.(lotId, payload)
+      () => http(`/api/chat/messages?with_user_id=${withUserId}${lotId ? `&lot_id=${encodeURIComponent(lotId)}` : ''}`),
+      () => demo.getChatMessages(withUserId, lotId),
+      () => []
     ),
-  markRead: (lotId) =>
+  send: ({ lotId = null, receiverId, content, messageType = 'text' }) =>
     call(
-      () => http(`/api/chat/${lotId}/read`, { method: 'PATCH' }),
-      () => demo.markChatRead?.(lotId)
+      () => http('/api/chat/messages', { method: 'POST', body: { lot_id: lotId, receiver_id: receiverId, content, message_type: messageType } }),
+      () => demo.sendChatMessage({ lotId, receiverId, content, messageType }),
+      () => null
+    ),
+  markRead: (withUserId, lotId = null) =>
+    call(
+      () => http('/api/chat/read', { method: 'POST', body: { with_user_id: withUserId, lot_id: lotId } }),
+      () => demo.markChatRead(withUserId, lotId),
+      () => null
     ),
 }
 

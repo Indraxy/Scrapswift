@@ -4,9 +4,10 @@ import { ChevronRight, Download, MessageSquare, Package } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import { lots as lotsApi, offers as offersApi } from '../../services/api'
 import QRBlock from '../../components/QRBlock'
-import ChatModal from '../../components/ChatModal'
 import { Empty, Loading, Notice, StatusChip, Timeline, formatDate, rupee } from '../../components/ui'
 import { fairnessSentence, speak } from '../../services/voice'
+import ChatDrawer from '../../components/ChatDrawer'
+
 
 export function MyLots() {
   const { t, tMaterial } = useI18n()
@@ -66,7 +67,7 @@ export function LotDetail() {
   const [error, setError] = useState('')
   const [offerList, setOfferList] = useState([])
   const [busy, setBusy] = useState(null)
-  const [chatOpen, setChatOpen] = useState(false)
+  const [chatTarget, setChatTarget] = useState(null)
 
   useEffect(() => {
     let alive = true
@@ -116,6 +117,33 @@ export function LotDetail() {
 
       {lot.photo && <img src={lot.photo} alt="" className="h-44 w-full border-2 border-ink object-cover" />}
 
+      {/* Direct Chat with Matched Recycler */}
+      {lot.recycler_id && (
+        <div className="plate flex items-center justify-between p-3 bg-boardDark text-white">
+          <div className="min-w-0 flex-1">
+            <div className="text-xs text-brass uppercase font-bold tracking-wider">{t('recycler')}</div>
+            <div className="truncate font-bold text-base">{lot.recycler_name}</div>
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setChatTarget({
+                recipient: {
+                  id: lot.recycler_user_id || lot.recycler_id,
+                  name: lot.recycler_name,
+                  role: 'recycler',
+                },
+                lot,
+              })
+            }
+            className="flex items-center gap-1.5 border-2 border-brass bg-brass px-3 py-1.5 text-xs font-bold text-ink transition hover:bg-brass/90"
+          >
+            <MessageSquare size={16} />
+            <span>{t('chatWithRecycler')}</span>
+          </button>
+        </div>
+      )}
+
       {awaitingOffers && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
@@ -138,10 +166,31 @@ export function LotDetail() {
                   <span className="num">✅ {o.authorization_id}</span>
                 </div>
                 {o.note && <p className="mt-1 text-sm">{o.note}</p>}
-                <button className="btn-primary mt-3 w-full" disabled={busy === o.offer_id}
-                        onClick={() => accept(o.offer_id)}>
-                  {t('acceptOffer')} · {rupee(o.amount)}
-                </button>
+                <div className="mt-3 flex items-center gap-2">
+                  <button className="btn-primary flex-1" disabled={busy === o.offer_id}
+                          onClick={() => accept(o.offer_id)}>
+                    {t('acceptOffer')} · {rupee(o.amount)}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-ghost flex items-center gap-1 px-3 py-2 text-xs"
+                    onClick={() =>
+                      setChatTarget({
+                        recipient: {
+                          id: o.recycler_user_id || o.recycler_id,
+                          name: o.recycler_name,
+                          role: 'recycler',
+                          location: o.recycler_location,
+                        },
+                        lot,
+                      })
+                    }
+                    title={t('chatWithRecycler')}
+                  >
+                    <MessageSquare size={16} />
+                    <span>{t('chat')}</span>
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -156,33 +205,6 @@ export function LotDetail() {
         <button className="btn-ghost w-full" onClick={() => downloadQr(lot.lot_id)}>
           <Download size={18} /> Download QR
         </button>
-      )}
-
-      {lot.recycler_id && (
-        <div className="border-[3px] border-ink bg-white p-4 shadow-plate">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-ink bg-mint text-board font-display font-bold text-lg">
-                💬
-              </span>
-              <div>
-                <div className="font-display text-base font-bold leading-tight">
-                  {t('chatWithRecycler')}
-                </div>
-                <div className="text-xs text-slate2 mt-0.5">
-                  {lot.recycler_name || t('recycler')} · <span className="font-semibold text-board">{t('chatOnline')}</span>
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => setChatOpen(true)}
-              className="btn-primary py-2 px-3.5 text-sm flex items-center gap-1.5 shadow-sm"
-            >
-              <MessageSquare size={16} />
-              <span>Chat</span>
-            </button>
-          </div>
-        </div>
       )}
 
       <div className="plate p-3">
@@ -203,6 +225,16 @@ export function LotDetail() {
           <Row label="Created" value={formatDate(lot.created_at)} />
         </dl>
       </div>
+
+      {chatTarget && (
+        <ChatDrawer
+          isOpen={Boolean(chatTarget)}
+          onClose={() => setChatTarget(null)}
+          recipient={chatTarget.recipient}
+          lot={chatTarget.lot}
+        />
+      )}
+
 
       {lot.fairness && !lot.fairness.ok && (
         <div className="border-[3px] border-ink bg-copper p-4 text-white shadow-plate">
@@ -250,14 +282,6 @@ export function LotDetail() {
         <div className="eyebrow mb-3">{t('timeline')}</div>
         <Timeline events={lot.timeline || []} />
       </div>
-
-      {chatOpen && (
-        <ChatModal
-          lot={lot}
-          onClose={() => setChatOpen(false)}
-          onUpdated={() => lotsApi.get(lotId).then(setLot)}
-        />
-      )}
     </div>
   )
 }

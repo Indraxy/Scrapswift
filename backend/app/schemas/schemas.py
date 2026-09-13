@@ -264,34 +264,36 @@ class SyncLotsIn(BaseModel):
 
 
 class ChatMessageIn(BaseModel):
-    message: str = Field(min_length=1, max_length=2000)
-    quick_action: str | None = ""
+    lot_id: str | None = None
+    receiver_id: int
+    content: str = Field(min_length=1, max_length=1000)
+    message_type: str = "text"  # text | quick_action | price_query | pickup_query
 
 
 class ChatMessageOut(BaseModel):
-    id: int
-    lot_id: str
-    collector_id: int
-    recycler_id: int
-    sender_id: int | None = None
-    sender_role: str
+    message_id: int
+    lot_id: str | None = None
+    sender_id: int
     sender_name: str
-    message: str
-    quick_action: str = ""
-    read: bool
+    sender_role: str
+    receiver_id: int
+    receiver_name: str
+    content: str
+    message_type: str
+    is_read: bool
     created_at: datetime
 
 
 class ChatThreadOut(BaseModel):
-    lot_id: str
-    material_category: str
-    weight: float
-    status: str
-    collector_name: str
-    recycler_name: str
-    counterpart_name: str
-    counterpart_role: str
-    last_message: str | None = None
+    thread_id: str
+    lot_id: str | None = None
+    other_user_id: int
+    other_user_name: str
+    other_user_role: str
+    other_user_contact: str = ""
+    lot_category: str = ""
+    lot_weight: float | None = None
+    last_message: str = ""
     last_message_at: datetime | None = None
     unread_count: int = 0
 
