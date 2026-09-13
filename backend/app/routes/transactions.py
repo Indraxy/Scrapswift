@@ -37,6 +37,19 @@ def confirm_handover(
     flagged, reason = anomaly.check(
         db, lot.material_category, payload.final_price, payload.final_weight, lot.weight
     )
+
+    if payload.scale_photo and lot.photo:
+        from ..services.gemini_vision import compare_handover_images
+        vision_result = compare_handover_images(
+            collector_photo=lot.photo,
+            recycler_photo=payload.scale_photo,
+            material_category=lot.material_category
+        )
+        if vision_result.get("anomaly_detected"):
+            flagged = True
+            vision_reason = vision_result.get("reason", "Visual mismatch detected.")
+            reason = f"{reason} | Visual Anomaly: {vision_reason}" if reason else f"Visual Anomaly: {vision_reason}"
+
     ref = next_handover_ref(db)
     handover = Handover(
         reference_number=ref,

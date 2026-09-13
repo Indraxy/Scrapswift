@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ScanLine } from 'lucide-react'
+import { MessageSquare, ScanLine } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import { offers as offersApi, recycler } from '../../services/api'
+import ChatModal from '../../components/ChatModal'
 import { Loading, Notice, Stat, StatusChip, formatDate, rupee } from '../../components/ui'
 
 export default function RecyclerDashboard() {
@@ -13,6 +14,7 @@ export default function RecyclerDashboard() {
   const [open, setOpen] = useState([])
   const [draft, setDraft] = useState({})
   const [sent, setSent] = useState('')
+  const [activeChatLot, setActiveChatLot] = useState(null)
 
   useEffect(() => {
     const load = () => {
@@ -158,6 +160,14 @@ export default function RecyclerDashboard() {
                       <Link className="btn-primary px-3 py-1.5 text-xs" to={`/verify/${lot.lot_id}`}>
                         {t('verifyLot')}
                       </Link>
+                      <button
+                        type="button"
+                        className="btn-ghost px-2.5 py-1.5 text-xs flex items-center gap-1 font-semibold"
+                        onClick={() => setActiveChatLot(lot)}
+                      >
+                        <MessageSquare size={13} />
+                        <span>Chat</span>
+                      </button>
                       {lot.status === 'HANDOVER_PENDING' && (
                         <>
                           <button className="btn-ghost px-2 py-1.5 text-xs" disabled={busy === lot.lot_id}
@@ -204,6 +214,14 @@ export default function RecyclerDashboard() {
           </table>
         </div>
       </section>
+
+      {activeChatLot && (
+        <ChatModal
+          lot={activeChatLot}
+          onClose={() => setActiveChatLot(null)}
+          onUpdated={() => recycler.dashboard().then(setData)}
+        />
+      )}
     </div>
   )
 }

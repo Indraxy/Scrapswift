@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ChevronRight, Download, Package } from 'lucide-react'
+import { ChevronRight, Download, MessageSquare, Package } from 'lucide-react'
 import { useI18n } from '../../i18n'
 import { lots as lotsApi, offers as offersApi } from '../../services/api'
 import QRBlock from '../../components/QRBlock'
+import ChatModal from '../../components/ChatModal'
 import { Empty, Loading, Notice, StatusChip, Timeline, formatDate, rupee } from '../../components/ui'
 import { fairnessSentence, speak } from '../../services/voice'
 
@@ -65,6 +66,7 @@ export function LotDetail() {
   const [error, setError] = useState('')
   const [offerList, setOfferList] = useState([])
   const [busy, setBusy] = useState(null)
+  const [chatOpen, setChatOpen] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -156,6 +158,33 @@ export function LotDetail() {
         </button>
       )}
 
+      {lot.recycler_id && (
+        <div className="border-[3px] border-ink bg-white p-4 shadow-plate">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-ink bg-mint text-board font-display font-bold text-lg">
+                💬
+              </span>
+              <div>
+                <div className="font-display text-base font-bold leading-tight">
+                  {t('chatWithRecycler')}
+                </div>
+                <div className="text-xs text-slate2 mt-0.5">
+                  {lot.recycler_name || t('recycler')} · <span className="font-semibold text-board">{t('chatOnline')}</span>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setChatOpen(true)}
+              className="btn-primary py-2 px-3.5 text-sm flex items-center gap-1.5 shadow-sm"
+            >
+              <MessageSquare size={16} />
+              <span>Chat</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="plate p-3">
         <div className="eyebrow mb-2">{t('status')}</div>
         <dl className="space-y-1.5 text-sm">
@@ -221,6 +250,14 @@ export function LotDetail() {
         <div className="eyebrow mb-3">{t('timeline')}</div>
         <Timeline events={lot.timeline || []} />
       </div>
+
+      {chatOpen && (
+        <ChatModal
+          lot={lot}
+          onClose={() => setChatOpen(false)}
+          onUpdated={() => lotsApi.get(lotId).then(setLot)}
+        />
+      )}
     </div>
   )
 }

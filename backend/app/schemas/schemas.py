@@ -261,3 +261,37 @@ class RecyclerProfileIn(BaseModel):
 
 class SyncLotsIn(BaseModel):
     lots: list[LotCreateIn]
+
+
+class ChatMessageIn(BaseModel):
+    message: str = Field(min_length=1, max_length=2000)
+    quick_action: str | None = ""
+
+
+class ChatMessageOut(BaseModel):
+    id: int
+    lot_id: str
+    collector_id: int
+    recycler_id: int
+    sender_id: int | None = None
+    sender_role: str
+    sender_name: str
+    message: str
+    quick_action: str = ""
+    read: bool
+    created_at: datetime
+
+
+class ChatThreadOut(BaseModel):
+    lot_id: str
+    material_category: str
+    weight: float
+    status: str
+    collector_name: str
+    recycler_name: str
+    counterpart_name: str
+    counterpart_role: str
+    last_message: str | None = None
+    last_message_at: datetime | None = None
+    unread_count: int = 0
+

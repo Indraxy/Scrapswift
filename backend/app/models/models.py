@@ -264,3 +264,21 @@ class Payment(Base):
     mode: Mapped[str] = mapped_column(String(10), default="cash")
     status: Mapped[str] = mapped_column(String(20), default="PAID")
     timestamp: Mapped[datetime] = mapped_column(DateTime, default=_now)
+
+
+class ChatMessage(Base):
+    """Direct message between a collector and the selected recycler for a lot."""
+
+    __tablename__ = "chat_messages"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    lot_id: Mapped[str] = mapped_column(ForeignKey("lots.lot_id"), index=True)
+    collector_id: Mapped[int] = mapped_column(ForeignKey("collectors.collector_id"), index=True)
+    recycler_id: Mapped[int] = mapped_column(ForeignKey("recyclers.recycler_id"), index=True)
+    sender_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    sender_role: Mapped[str] = mapped_column(String(20))  # collector | recycler | system
+    sender_name: Mapped[str] = mapped_column(String(120), default="")
+    message: Mapped[str] = mapped_column(Text)
+    quick_action: Mapped[str] = mapped_column(String(40), default="")
+    read: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=_now)

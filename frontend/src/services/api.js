@@ -550,3 +550,21 @@ export const admin = {
   trace: (lotId) =>
     call(() => http(`/api/admin/trace/${lotId}`), () => demo.trace(lotId), () => sbDb.trace(lotId)),
 }
+
+export const chat = {
+  threads: () =>
+    call(() => http('/api/chat/threads'), () => demo.chatThreads?.() ?? []),
+  messages: (lotId) =>
+    call(() => http(`/api/chat/${lotId}/messages`), () => demo.chatMessages?.(lotId) ?? []),
+  send: (lotId, payload) =>
+    call(
+      () => http(`/api/chat/${lotId}/messages`, { method: 'POST', body: payload }),
+      () => demo.sendChatMessage?.(lotId, payload)
+    ),
+  markRead: (lotId) =>
+    call(
+      () => http(`/api/chat/${lotId}/read`, { method: 'PATCH' }),
+      () => demo.markChatRead?.(lotId)
+    ),
+}
+
