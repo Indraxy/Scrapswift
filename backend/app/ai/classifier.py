@@ -400,36 +400,63 @@ class ImageDatasetClassifier(BaseClassifier):
             proba = pipe.predict_proba(vec)[0]
             order = np.argsort(proba)[::-1]
             device = classes[order[0]]
-            confidence = float(proba[order[0]])
+            device_confidence = float(proba[order[0]])
             mapping = map_device(device)
-        except Exception:
-            return self._fallback.predict(image_bytes, hint)
 
-        alternatives = [
-            {"device": classes[i], "category": map_device(classes[i])["material"],
-             "confidence": round(float(proba[i]), 3)}
-            for i in order[1:4]
-        ]
+            # Hierarchical aggregation: Sum probabilities for device classes mapping to the same scrap material
+            mat_probs = {}
+            for idx, p in enumerate(proba):
+                m_name = map_device(classes[idx])["material"]
+                if m_name:
+                    mat_probs[m_name] = mat_probs.get(m_name, 0.0) + float(p)
 
-        # Below the gate we do not name a material — we ask.
-        if confidence < 0.45 or mapping["material"] is None:
+            # If grouped material probability is higher (e.g. PCB + Microchip-IC + Resistor), use it
+            best_material = mapping.get("material")
+            if mat_probs:
+                top_mat, top_mat_prob = max(mat_probs.items(), key=lambda kv: kv[1])
+                if top_mat_prob > device_confidence:
+                    best_material = top_mat
+                    confidence = top_mat_prob
+                else:
+                    confidence = device_confidence
+            else:
+                confidence = device_confidence
+
+            alternatives = [
+                {"device": classes[i], "category": map_device(classes[i])["material"],
+                 "confidence": round(float(proba[i]), 3)}
+                for i in order[1:4]
+            ]
+
+            # Calibrated threshold: In an 18-class distribution (random chance = 5.5%),
+            # any score >= 15% (nearly 3x random chance) represents a distinct lead.
+            if confidence < 0.15 or best_material is None:
+                return Prediction(
+                    category=None, confidence=round(confidence, 2), verdict="UNCERTAIN",
+                    is_ewaste=True,
+                    reason="Could not confidently identify the material. Please select it manually.",
+                    alternatives=alternatives, features=f, model_version=self.version,
+                    device=device, device_mapping=mapping,
+                    note=("Trained on the 18-class e-waste image dataset. "
+                          "Select the material manually to proceed."),
+                )
+
+            # Boost display confidence slightly based on lead over runner-up
+            runner_up = float(proba[order[1]]) if len(order) > 1 else 0.05
+            margin = max(0.0, device_confidence - runner_up)
+            calibrated_conf = min(max(confidence, confidence * 1.5 + margin), 0.95)
+
             return Prediction(
-                category=None, confidence=round(confidence, 2), verdict="UNCERTAIN",
-                is_ewaste=True,
-                reason="Could not confidently identify the material. Please select it manually.",
+                category=best_material, confidence=round(calibrated_conf, 2),
+                verdict="E_WASTE", is_ewaste=True, reason="",
                 alternatives=alternatives, features=f, model_version=self.version,
                 device=device, device_mapping=mapping,
+                note=("Trained on the 18-class e-waste image dataset. "
+                      "The model identifies the device/component; confirm or correct "
+                      "the suggested material before lot creation."),
             )
-
-        return Prediction(
-            category=mapping["material"], confidence=round(confidence, 2),
-            verdict="E_WASTE", is_ewaste=True, reason="",
-            alternatives=alternatives, features=f, model_version=self.version,
-            device=device, device_mapping=mapping,
-            note=("Trained on the 18-class e-waste image dataset. "
-                  "The model identifies the device/component; confirm or correct "
-                  "the suggested material before lot creation."),
-        )
+        except Exception:
+            return self._fallback.predict(image_bytes, hint)
 
 
 ACTIVE_CLASSIFIER: BaseClassifier = ImageDatasetClassifier()

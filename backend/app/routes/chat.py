@@ -122,16 +122,16 @@ def get_messages(
     user: User = Depends(current_user),
     db: Session = Depends(get_db),
 ):
-    """Retrieve message history between current user and specified user."""
-    query = db.query(ChatMessage).filter(
-        or_(
-            and_(ChatMessage.sender_id == user.id, ChatMessage.receiver_id == with_user_id),
-            and_(ChatMessage.sender_id == with_user_id, ChatMessage.receiver_id == user.id),
-        )
-    )
-
+    """Retrieve message history between current user and specified user or for a specific lot."""
     if lot_id:
-        query = query.filter(ChatMessage.lot_id == lot_id)
+        query = db.query(ChatMessage).filter(ChatMessage.lot_id == lot_id)
+    else:
+        query = db.query(ChatMessage).filter(
+            or_(
+                and_(ChatMessage.sender_id == user.id, ChatMessage.receiver_id == with_user_id),
+                and_(ChatMessage.sender_id == with_user_id, ChatMessage.receiver_id == user.id),
+            )
+        )
 
     rows = query.order_by(ChatMessage.created_at.asc()).limit(200).all()
 

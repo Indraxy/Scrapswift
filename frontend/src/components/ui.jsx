@@ -161,9 +161,15 @@ export function Timeline({ events }) {
 
 export function formatDate(value) {
   if (!value) return ''
-  const d = new Date(value)
+  let dateStr = String(value)
+  // Backend returns naive UTC strings, append Z to parse correctly
+  if (dateStr.includes('T') && !dateStr.endsWith('Z') && !dateStr.includes('+')) {
+    dateStr += 'Z'
+  }
+  const d = new Date(dateStr)
   if (Number.isNaN(d.getTime())) return String(value)
   return d.toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
     day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
   })
 }

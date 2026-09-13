@@ -242,6 +242,7 @@ class HandoverIn(BaseModel):
     scale_photo: str = ""
     handover_location: str = ""
     gps_location: str = ""
+    attempt: int = 1
 
 
 class PaymentIn(BaseModel):

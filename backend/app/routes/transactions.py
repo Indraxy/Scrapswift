@@ -37,6 +37,32 @@ def confirm_handover(
     flagged, reason = anomaly.check(
         db, lot.material_category, payload.final_price, payload.final_weight, lot.weight
     )
+
+    if payload.scale_photo and lot.photo:
+        from ..services.gemini_vision import compare_handover_images
+        vision_result = compare_handover_images(
+            collector_photo=lot.photo,
+            recycler_photo=payload.scale_photo,
+            material_category=lot.material_category
+        )
+        if vision_result.get("anomaly_detected"):
+            flagged = True
+            vision_reason = vision_result.get("reason", "Visual mismatch detected.")
+            reason = f"{reason} | Visual Anomaly: {vision_reason}" if reason else f"Visual Anomaly: {vision_reason}"
+
+    if flagged:
+        if payload.attempt == 1:
+            return {"status": "RETRY_REQUESTED", "reason": reason}
+        else:
+            txn.transaction_status = "VERIFICATION_FAILED"
+            txn.anomaly_flag = True
+            txn.anomaly_reason = reason
+            txn.updated_at = datetime.utcnow()
+            lot.status = "VERIFICATION_FAILED"
+            log_event(db, lot.lot_id, "VERIFICATION_FAILED", f"Anomaly after retry: {reason}", actor=rec.name)
+            db.commit()
+            return {"status": "VERIFICATION_FAILED", "reason": reason}
+
     ref = next_handover_ref(db)
     handover = Handover(
         reference_number=ref,
@@ -57,8 +83,8 @@ def confirm_handover(
     txn.handover_location = payload.handover_location or rec.location
     txn.transaction_status = "HANDED_OVER"
     txn.payment_status = "PENDING"
-    txn.anomaly_flag = flagged
-    txn.anomaly_reason = reason
+    txn.anomaly_flag = False
+    txn.anomaly_reason = ""
     txn.updated_at = datetime.utcnow()
 
     lot.status = "PAYMENT_PENDING"
@@ -66,8 +92,6 @@ def confirm_handover(
     log_event(db, lot.lot_id, "HANDED_OVER",
               f"{payload.final_weight} kg at ₹{payload.final_price:.0f} · ref {ref}", actor=rec.name)
     log_event(db, lot.lot_id, "PAYMENT_PENDING", "Awaiting payment confirmation")
-    if flagged:
-        log_event(db, lot.lot_id, "ANOMALY_FLAGGED", reason, actor="anomaly-service")
     db.commit()
     return {
         "handover_id": handover.handover_id,

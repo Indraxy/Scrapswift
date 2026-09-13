@@ -737,11 +737,26 @@ export function verifyLot(lotId) {
   }
 }
 
-export function confirmHandover({ lot_id, final_weight, final_price }) {
+export function confirmHandover({ lot_id, final_weight, final_price, attempt = 1 }) {
   const lot = db.lots.find((l) => l.lot_id === lot_id)
   const txn = db.transactions.find((t) => t.lot_id === lot_id)
   const recycler = db.recyclers.find((r) => r.recycler_id === lot.recycler_id)
   const flag = checkAnomaly(lot.material_category, final_price, final_weight, lot.weight)
+  
+  if (flag.flagged) {
+    if (attempt === 1) {
+      return { status: 'RETRY_REQUESTED', reason: flag.reason }
+    } else {
+      txn.transaction_status = 'VERIFICATION_FAILED'
+      txn.anomaly_flag = true
+      txn.anomaly_reason = flag.reason
+      txn.updated_at = now()
+      lot.status = 'VERIFICATION_FAILED'
+      addEvent(lot_id, 'VERIFICATION_FAILED', `Anomaly after retry: ${flag.reason}`, recycler.name)
+      return { status: 'VERIFICATION_FAILED', reason: flag.reason }
+    }
+  }
+
   db.handoverSeq += 1
   const ref = `HR-${new Date().getFullYear()}-${String(db.handoverSeq).padStart(5, '0')}`
   db.handovers.push({
@@ -752,19 +767,18 @@ export function confirmHandover({ lot_id, final_weight, final_price }) {
   })
   Object.assign(txn, {
     final_weight, final_price, handover_location: recycler.location, transaction_status: 'HANDED_OVER',
-    payment_status: 'PENDING', anomaly_flag: flag.flagged, anomaly_reason: flag.reason, updated_at: now(),
+    payment_status: 'PENDING', anomaly_flag: false, anomaly_reason: '', updated_at: now(),
   })
   lot.status = 'PAYMENT_PENDING'
   addEvent(lot_id, 'RECYCLER_VERIFIED', `QR verified by ${recycler.name}`, recycler.name)
   addEvent(lot_id, 'HANDED_OVER', `${final_weight} kg at ₹${final_price} · ref ${ref}`, recycler.name)
   addEvent(lot_id, 'PAYMENT_PENDING', 'Awaiting payment confirmation')
-  if (flag.flagged) addEvent(lot_id, 'ANOMALY_FLAGGED', flag.reason, 'anomaly-service')
   return {
     reference_number: ref, lot_id, material: lot.material_category, declared_weight: lot.weight,
     final_weight, final_price, quoted_price: txn.quoted_price, recycler: recycler.name,
     collection_location: txn.collection_location, handover_location: txn.handover_location,
-    status: 'VERIFIED', transaction_id: txn.transaction_id, anomaly_flag: flag.flagged,
-    anomaly_reason: flag.reason, timestamp: now(),
+    status: 'VERIFIED', transaction_id: txn.transaction_id, anomaly_flag: false,
+    anomaly_reason: '', timestamp: now(),
   }
 }
 
