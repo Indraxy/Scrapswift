@@ -84,10 +84,10 @@ def compare_handover_images(
         f"- Image 1: Uploaded by the scrap collector when creating the lot (declared category: '{material_category}').\n"
         f"- Image 2: Uploaded by the authorised recycler during physical handover/weighing on the scales.\n\n"
         f"CRITICAL INSTRUCTIONS:\n"
-        f"1. Natural variations in camera angle, rotation, perspective, lighting, zoom, distance, and background (e.g. on a weighing scale vs floor) are EXPECTED and NORMAL.\n"
-        f"2. IMPORTANT: Be EXTREMELY LENIENT. If the materials are plausibly the same category or roughly look like the same type of scrap, give the user the benefit of the doubt and mark as MATCH.\n"
-        f"3. If Image 2 shows the SAME physical scrap item/device or genuine material matching Image 1, mark as MATCH (is_match: true, anomaly_detected: false).\n"
-        f"4. ONLY mark as ANOMALY if there is a BLATANT, UNDENIABLE FRAUDULENT SUBSTITUTION (e.g. Image 1 is a battery, Image 2 is a plastic bottle). If you are unsure, mark it as MATCH.\n\n"
+        f"1. Natural variations in camera angle, rotation, perspective, lighting, zoom, distance, and background (e.g. on a weighing scale vs floor) are EXPECTED and NORMAL. Do not flag anomalies just because the photo was taken differently.\n"
+        f"2. However, you MUST verify that the physical items in both images are the EXACT SAME objects or identical items. If the items are completely different objects (e.g. different shapes, colors, models, or entirely different materials), you MUST mark it as an ANOMALY (is_match: false, anomaly_detected: true).\n"
+        f"3. If Image 2 shows the SAME physical scrap item/device matching Image 1, mark as MATCH (is_match: true, anomaly_detected: false).\n"
+        f"4. If you detect a clear fraudulent substitution (e.g. collector declared a laptop, but recycler photographed a router or an empty scale), mark as ANOMALY.\n\n"
         f"Return strict JSON with this schema:\n"
         f'{{\n'
         f'  "is_match": boolean,\n'
@@ -115,25 +115,32 @@ def compare_handover_images(
         },
     }
 
-    try:
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-            content_text = data["candidates"][0]["content"]["parts"][0]["text"]
-            result = json.loads(content_text)
-            result["audited_by"] = f"gemini-vision ({GEMINI_MODEL})"
-            return result
-    except Exception as exc:
-        logger.error(f"Gemini vision audit failed: {exc}")
-        return {
-            "is_match": True,
-            "anomaly_detected": False,
-            "confidence": 0.0,
-            "reason": f"Gemini audit fallback: {str(exc)}",
-            "audited_by": "fallback",
-        }
+    for attempt in range(3):
+        try:
+            logger.info(f"Sending images to Gemini API (Attempt {attempt + 1}/3)...")
+            req = urllib.request.Request(
+                url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                content_text = data["candidates"][0]["content"]["parts"][0]["text"]
+                result = json.loads(content_text)
+                result["audited_by"] = f"gemini-vision ({GEMINI_MODEL})"
+                logger.info(f"Gemini API returned SUCCESS: is_match={result.get('is_match')}, anomaly={result.get('anomaly_detected')}, reason='{result.get('reason')}'")
+                return result
+        except Exception as exc:
+            logger.error(f"Gemini vision audit failed on attempt {attempt + 1}: {exc}")
+            import time
+            time.sleep(1) # wait 1 second before retrying
+            
+    logger.warning("Falling back to auto-approve due to repeated API failures.")
+    return {
+        "is_match": True,
+        "anomaly_detected": False,
+        "confidence": 0.0,
+        "reason": f"Gemini audit fallback: API failed after 3 attempts.",
+        "audited_by": "fallback",
+    }
